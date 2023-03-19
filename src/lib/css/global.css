@@ -1,0 +1,7 @@
+@import url("@fontsource/lato");
+
+html {
+    background: #fff center center fixed
+        no-repeat;
+    background-size: cover;
+}
