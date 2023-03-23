@@ -1,23 +1,45 @@
-# dss-blog
-A blogging platform designed with secure software principles.
+# Blogged
+<p>Development repository for the Developing Secure Software - Coursework 2</p>
+<p>Group ID: UG08</p>
 
-## Developing
 
-Start a development server:
+### _Project Setup_
 
-```bash
-npm run dev
+###### 1. Clone this repository
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+`git clone https://github.com/dss-ug08/dss-blog.git`
 
-## Building
+###### 2. Change to the root directory of the repo
 
-To create a production build:
+`cd dss-blog`
 
-```bash
-npm run build
-```
+###### 3. Install the dependencies for the server
 
-You can preview the production build with `npm run preview`.
+`npm install`
+
+###### 4. Create a production build
+
+`npm run build`
+
+
+###### 5. Start a development server
+
+`npm run dev`
+
+###### 5a. Optionally, start the server and open the app in a new browser tab
+
+`npm install`
+
+
+### _Running the Application_
+
+###### Client
+<p>The front-end can be run by running the following command within the 'client' directory: </p>
+
+`npm start`
+
+###### Server
+
+<p> The server-side application can be run by the app.js file located within the server directory.</p>
+<p>Development repository for the Developing Secure Software - Coursework 2</p>
+<p>Group ID: UG08</p>

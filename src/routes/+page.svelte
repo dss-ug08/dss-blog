@@ -1,11 +1,10 @@
 <script>
-    import { onMount } from "svelte";
-    import '$lib/css/global.css';
-
-    import Test from '$cmp/Test.svelte';
+    import {onMount} from "svelte";
+    import '$root/css/global.css';
+    import Test from '$routes/Test.svelte';
 </script>
 
-<Test />
+<Test/>
 
 <style>
 </style>
