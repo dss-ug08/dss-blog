@@ -1,5 +1,6 @@
 <script>
-    import { onMount } from "svelte";
+    import {onMount} from "svelte";
+
     export let target = "World";
     onMount(async () => {
         console.log("Hello, World!");
