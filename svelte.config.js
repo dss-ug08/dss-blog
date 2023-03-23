@@ -8,6 +8,7 @@ const config = {
     kit: {
         adapter: adapter(),
         alias: {
+            // Source directory variable shortcuts
             "$src": "./src/",
             "$cmp": "./src/components",
             "$routes": "./src/routes/",
