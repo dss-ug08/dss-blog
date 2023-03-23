@@ -1,11 +1,13 @@
 <script>
     import { onMount } from "svelte";
-    import '$lib/css/global.css';
 
-    import Test from '$cmp/Test.svelte';
+    import Test from "$cmp/Test.svelte";
 </script>
 
-<Test />
+<main>
+    <Test />
+    <input type="checkbox" role="switch" />
+    <label>Hi I am a switch.</label>
+</main>
 
-<style>
-</style>
+<style></style>

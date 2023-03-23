@@ -20,6 +20,7 @@
 	"type": "module",
 	"dependencies": {
 		"@fontsource/lato": "^4.5.10",
-		"@fontsource/lora": "^4.5.13"
+		"@fontsource/lora": "^4.5.13",
+		"@picocss/pico": "^1.5.7"
 	}
 }
