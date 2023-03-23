@@ -6,8 +6,10 @@
 
 <main>
     <Test />
-    <input type="checkbox" role="switch" />
-    <label>Hi I am a switch.</label>
+    <label>
+        <input type="checkbox" role="switch" />
+        Hi I am a switch.
+    </label>
 </main>
 
 <style></style>
