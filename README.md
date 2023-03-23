@@ -29,17 +29,3 @@
 ###### 5a. Optionally, start the server and open the app in a new browser tab
 
 `npm install`
-
-
-### _Running the Application_
-
-###### Client
-<p>The front-end can be run by running the following command within the 'client' directory: </p>
-
-`npm start`
-
-###### Server
-
-<p> The server-side application can be run by the app.js file located within the server directory.</p>
-<p>Development repository for the Developing Secure Software - Coursework 2</p>
-<p>Group ID: UG08</p>
