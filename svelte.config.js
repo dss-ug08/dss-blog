@@ -14,10 +14,6 @@ const config = {
             "$models": "./src/lib/models/",
             "$config": "./src/lib/config/",
 
-
-            "$assets": "./public/",
-            "$img": "./public/images/",
-
             // Files in the public directory are served at the root path
             "$root": "./public/"
         }
