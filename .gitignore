@@ -9,12 +9,11 @@ node_modules/
 !.env.example
 
 # Build output
-client/dist/
-client/.cache/
+dist/
+.cache/
 build/
-client/build
-client/.svelte-kit
-/package
+.svelte-kit/
+package/
 
 
 # Log files
