@@ -1,8 +1,8 @@
 <script>
-  /* 
-      This page displays a search box, and allows users to search for posts.
-      Results should be displayed if a query has been provided.
-      */
+  /**
+    This page displays a search box, and allows users to search for posts.
+    Results should be displayed if a query has been provided.
+  */
   /** @type {import('./$types').PageData} */
   export let data;
   

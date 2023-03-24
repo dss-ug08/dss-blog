@@ -1,12 +1,14 @@
 import { error } from "@sveltejs/kit";
 
-/** @type {import('./$types').PageServerLoad} */
+/** 
+ * This code should load an individual post's data from the database, and return it to the
+ * frontend. If the post is not found, we should return an error which will be handled by
+ * the +error.svelte component.
+ * 
+ * @returns {Promise<{post: {title: String, content: String, slug: String}}>} A post object containing the post's title, content, and slug.
+ * @type {import('./$types').PageServerLoad}
+*/
 export async function load({ params }) {
-  /* 
-        This code should load an individual post's data from the database, and return it to the
-        frontend. If the post is not found, we should return an error which will be handled by
-        the +error.svelte component.
-  */
   /*
     Code for handling posts could look something like this:
       import getPostFromDatabase from '$lib/server/db.js';
@@ -24,7 +26,7 @@ export async function load({ params }) {
     post: {
       title: "Hello world!",
       content: "This is a dummy post.",
-      slug: params.slug
-    }
-  }
+      slug: params.slug,
+    },
+  };
 }
