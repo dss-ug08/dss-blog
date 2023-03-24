@@ -19,4 +19,12 @@ export async function load({ params }) {
     
       throw error(404, 'Not found');
   */
+  return {
+    // For demonstration purposes, we'll just return a dummy post.
+    post: {
+      title: "Hello world!",
+      content: "This is a dummy post.",
+      slug: params.slug
+    }
+  }
 }
