@@ -1,5 +1,4 @@
-import { error } from "@sveltejs/kit";
-
+import { error} from "@sveltejs/kit";
 /** 
  * This code should load an individual post's data from the database, and return it to the
  * frontend. If the post is not found, we should return an error which will be handled by
