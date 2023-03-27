@@ -1,9 +1,10 @@
 /* TODO: db functions here to allow easy db swapping */
 import PG from "pg";
 import crypto from "crypto";
+import { verifyPassword } from "$lib/server/auth.js";
 
 
-const connectionString = "CONN_STRING_HERE_ENV_VAR_TRIES_TO_AUTO_UPDATE";
+const connectionString = "ENV-VARIABLE-HERE";
 
 function generateSessionId() {
   return crypto.randomBytes(16).toString("hex");
@@ -33,17 +34,37 @@ export async function insertUser(username, email, passwordHash) {
 export async function verifyUserCredentials(username, password) {
   const client = new PG.Client({ connectionString });
 
+  console.log(username, password);
+
   try {
     await client.connect();
-    const query = "SELECT * FROM users WHERE username = $1 AND password_hash = $2";
-    const values = [username, password];
+    const query = `
+        SELECT users.id, users.*
+        FROM users
+        WHERE username = $1
+      `;
+
+    const values = [username];
     const result = await client.query(query, values);
 
+    console.log("Query result:", result);
+
     if (result.rowCount > 0) {
-      return result.rows[0];
+      const user = result.rows[0];
+      console.log("User found:", user);
+
+      const passwordMatches = await verifyPassword(password, user.password_hash);
+      console.log("Password matches:", passwordMatches);
+
+      if (passwordMatches) {
+
+        return user;
+      }
     } else {
-      return null;
+      console.log("User not found");
     }
+
+    return null;
   } catch (error) {
     console.error("Error verifying user credentials:", error);
     throw error;
@@ -52,14 +73,16 @@ export async function verifyUserCredentials(username, password) {
   }
 }
 
+
 export async function createSession(user) {
   const client = new PG.Client({ connectionString });
 
   try {
     await client.connect();
     const sessionId = generateSessionId();
-    const query = `INSERT INTO sessions (session_id, user_id) VALUES ($1, $2)`;
-    const values = [sessionId, user.id];
+    const expiresAt = calculateSessionExpiration();
+    const query = `INSERT INTO sessions (session_id, user_id, expires_at) VALUES ($1, $2, $3)`;
+    const values = [sessionId, user, expiresAt];
     await client.query(query, values);
 
     return sessionId;
@@ -69,6 +92,14 @@ export async function createSession(user) {
   } finally {
     await client.end();
   }
+}
+
+
+function calculateSessionExpiration() {
+  const expirationHours = 24;
+  const currentDate = new Date();
+  currentDate.setHours(currentDate.getHours() + expirationHours);
+  return currentDate;
 }
 
 export async function destroySession(sessionId) {
@@ -86,6 +117,7 @@ export async function destroySession(sessionId) {
     await client.end();
   }
 }
+
 
 export async function getUserFromSession(sessionId) {
   const client = new PG.Client({ connectionString });
