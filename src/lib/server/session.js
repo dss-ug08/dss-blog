@@ -1,6 +1,11 @@
-import { createSession, destroySession, getUserFromSession } from "$lib/server/db";
+import {
+  createSession,
+  destroySession,
+  getUserFromSession,
+  verifyUserCredentials
+} from "$lib/server/db";
 
-// Create a session
+// Create a session\
 export async function loginUser(username, password) {
   // Verify user credentials and get the user from the database
   const user = await verifyUserCredentials(username, password);

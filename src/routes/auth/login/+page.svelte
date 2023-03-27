@@ -13,30 +13,90 @@
   export let form;
 
   if (data.user) {
-    // If the user is already logged in, redirect them to the home page
+
     throw redirect(307, "/");
   }
 
   let errorMessage = "";
+  let successMessage = "";
+
+  async function handleSubmit() {
+    console.log("handleSubmit called");
+    const username = usernameInput.value;
+    const password = passwordInput.value;
+    console.log("username:", username, "password:", password);
+
+    const response = await fetch("/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({
+        username: username,
+        password: password
+      })
+    });
+
+    console.log("response:", response);
+    console.log("response status:", response.status);
+
+
+    if (response.ok) {
+      console.log("User has logged in");
+      const responseData = await response.json();
+      const dataString = responseData.data;
+      const data = JSON.parse(dataString);
+
+      console.log("data:", data);
+
+      const returnMessage = data[2];
+      const jsonRM = JSON.parse(returnMessage);
+      console.log(jsonRM.message);
+      console.log();
+
+      successMessage = jsonRM.message;
+
+
+    } else {
+      const error = await response.json();
+      console.log("error:", error);
+      console.log("error.message:", error.body);
+      errorMessage = error.body;
+    }
+
+  }
+
+
+  let usernameInput;
+  let passwordInput;
+
 </script>
 
 <main class="container">
   <h2>Login</h2>
 
-  <form method="POST" use:form action="">
-    {#if errorMessage}
-      <div class="error">{errorMessage}</div>
-    {/if}
+  <!-- Add a new element to display successMessage -->
+  {#if successMessage}
+    <p class="success">{successMessage}</p>
+  {/if}
+
+  <!-- Add a new element to display errorMessage -->
+  {#if errorMessage}
+    <p class="error">{errorMessage}</p>
+  {/if}
+
+  <form on:submit|preventDefault={handleSubmit}>
     <label>
       Username
-      <input name="username" type="text" />
+      <input name="username" type="text" bind:this="{usernameInput}" />
     </label>
     <label>
       Password
-      <input name="password" type="password" />
+      <input name="password" type="password" bind:this="{passwordInput}" />
     </label>
-    <button>Log in</button>
+    <button type="submit">Log in</button>
   </form>
+
 </main>
 
 <style>

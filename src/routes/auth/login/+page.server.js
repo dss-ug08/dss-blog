@@ -1,4 +1,5 @@
-import { error, redirect } from "@sveltejs/kit";
+import querystring from "querystring";
+
 import {
   getUserFromSession,
   verifyUserCredentials,
@@ -21,45 +22,40 @@ export async function load({ cookies }) {
   return { user };
 }
 
-
 /**
  * Credential verification logic happens here. If a user session is validated, we should
  * return a user session value which can be saved as a cookie on the frontend, and the user
  * should be redirected to their referring page, or the homepage is none is specified.
  * @type {import("./$types").Actions}
  */
-
-/** @type {import("./$types").Actions} */
-
 export const actions = {
   default: async ({ request, context }) => {
-    const { username, password } = request.body;
+    const body = await request.arrayBuffer();
+    const decodedBody = new TextDecoder().decode(body);
+    const formData = querystring.parse(decodedBody);
+    const { username, password } = formData;
 
     const user = await verifyUserCredentials(username, password);
 
-    if (user) {
-      const sessionId = await createSession(user);
-
-      console.log(
-        "Logged in successfully"
-      );
-
-      return {
-        status: 200,
-        headers: {
-          "set-cookie": `sessionid=${sessionId}; Path=/; HttpOnly; SameSite=Lax`
-        },
-        body: {
-          message: "Logged in successfully"
-        }
-      };
-    } else {
+    if (!user) {
       return {
         status: 401,
-        body: {
-          message: "Invalid username or password"
+        body: JSON.stringify({ message: "Invalid username or password" }),
+        headers: {
+          "Content-Type": "application/json"
         }
       };
     }
+
+    const sessionId = await createSession(user.id);
+
+    return {
+      status: 200,
+      body: JSON.stringify({ message: "User logged in successfully" }),
+      headers: {
+        "Content-Type": "application/json",
+        "Set-Cookie": `sessionid=${sessionId}; Path=/; HttpOnly`
+      }
+    };
   }
 };
