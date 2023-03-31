@@ -12,7 +12,7 @@ import { getUserFromCookie } from "$lib/server/session";
  * If a user already has a session cookie, we should return their user object and
  * redirect them to the homepage.
  *
- * @param {Object} An object returning parameters from the request (params) and an object that allows access to cookies (cookies)
+ * @param {Object} cookies An object returning parameters from the request (params) and an object that allows access to cookies (cookies)
  * @returns {Promise<Object | null>} A user object, or null if not logged in.
  * @type {import("./$types").PageServerLoad}
  */
