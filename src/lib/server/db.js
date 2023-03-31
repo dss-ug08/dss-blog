@@ -2,16 +2,32 @@
 import PG from "pg";
 import crypto from "crypto";
 import { verifyPassword } from "$lib/server/auth.js";
+import dotenv from "dotenv";
 
 
-const connectionString = "ENV-VARIABLE-HERE";
+// Load environment variables from the .env file
+dotenv.config();
 
+// Connection string for the PostgreSQL database
+const connectionString = process.env.VITE_PG_CONNECTION_STRING_LOCAL;
+
+/**
+ * Generates a random session ID using the crypto module.
+ *
+ * @returns {string} A 32-character long hexadecimal string representing the session ID.
+ */
 function generateSessionId() {
   return crypto.randomBytes(16).toString("hex");
 }
 
-// Create a new entry for the user table
-// Parameters: String - username, email, passwordHash
+/**
+ * Inserts a new user into the users table with the given username, email, and password hash.
+ *
+ * @param {string} username The username of the new user.
+ * @param {string} email The email address of the new user.
+ * @param {string} passwordHash The hashed password of the new user.
+ * @returns {Promise<Object | null>} The inserted user object if successful, or null if an error occurs.
+ */
 export async function insertUser(username, email, passwordHash) {
   const client = new PG.Client({ connectionString });
 
@@ -31,6 +47,13 @@ export async function insertUser(username, email, passwordHash) {
   }
 }
 
+/**
+ * Verifies if the given username and password match a user in the users table.
+ *
+ * @param {string} username The username of the user to verify.
+ * @param {string} password The plaintext password to check against the stored password hash.
+ * @returns {Promise<Object | null>} The user object if the credentials are valid, or null if the credentials are invalid or an error occurs.
+ */
 export async function verifyUserCredentials(username, password) {
   const client = new PG.Client({ connectionString });
 
@@ -73,7 +96,13 @@ export async function verifyUserCredentials(username, password) {
   }
 }
 
-
+/**
+ * Creates a new session for the given user in the sessions table.
+ *
+ * @param {number} user The user ID to create the session for.
+ * @returns {Promise<string>} The session ID of the created session.
+ * @throws {Error} If an error occurs while creating the session.
+ */
 export async function createSession(user) {
   const client = new PG.Client({ connectionString });
 
@@ -94,7 +123,11 @@ export async function createSession(user) {
   }
 }
 
-
+/**
+ * Calculates the expiration date of a session by adding a fixed number of hours to the current date.
+ *
+ * @returns {Date} The calculated expiration date for the session.
+ */
 function calculateSessionExpiration() {
   const expirationHours = 24;
   const currentDate = new Date();
@@ -102,6 +135,13 @@ function calculateSessionExpiration() {
   return currentDate;
 }
 
+/**
+ * Deletes a session from the sessions table by its session ID.
+ *
+ * @param {string} sessionId The session ID to delete.
+ * @returns {Promise<void>}
+ * @throws {Error} If an error occurs while deleting the session.
+ */
 export async function destroySession(sessionId) {
   const client = new PG.Client({ connectionString });
 
@@ -118,7 +158,12 @@ export async function destroySession(sessionId) {
   }
 }
 
-
+/**
+ * Retrieves the user data associated with the given session ID from the sessions and users tables.
+ *
+ * @param {string} sessionId The session ID to look up.
+ * @returns {Promise<Object | null>} The user object if found, or null if the session is not found or expired.
+ */
 export async function getUserFromSession(sessionId) {
   const client = new PG.Client({ connectionString });
 
@@ -147,7 +192,12 @@ export async function getUserFromSession(sessionId) {
 }
 
 
-// Return a user based on the email provided from the users table
+/**
+ * Retrieves a user by their email address from the users table.
+ *
+ * @param {string} email The email address of the user to look up.
+ * @returns {Promise<Object | null>} The user object if found, or null if no user with the given email address is found.
+ */
 export async function getUserByEmail(email) {
   const client = new PG.Client({ connectionString });
 
@@ -169,7 +219,12 @@ export async function getUserByEmail(email) {
   }
 }
 
-// Check then return the user parameter given
+/**
+ * Retrieves a user by their username from the users table.
+ *
+ * @param {string} username The username of the user to look up.
+ * @returns {Promise<Object | null>} The user object if found, or null if no user with the given username is found.
+ */
 export async function getUserByUsername(username) {
   const client = new PG.Client({ connectionString });
 
@@ -191,7 +246,12 @@ export async function getUserByUsername(username) {
   }
 }
 
-// Returns a post by the slug
+/**
+ * Retrieves a post by its slug from the posts table.
+ *
+ * @param {string} slug The slug of the post to look up.
+ * @returns {Promise<Object | null>} The post object if found, or null if no post with the given slug is found.
+ */
 export async function getPostBySlug(slug) {
   const client = new PG.Client({ connectionString });
 
@@ -213,7 +273,12 @@ export async function getPostBySlug(slug) {
   }
 }
 
-// TODO: Debugging functions
+/**
+ * Tests the database connection by executing a simple query.
+ *
+ * @returns {Promise<boolean>} True if the connection is successful, false if an error occurs.
+ */
+
 export async function testConnection() {
   const client = new PG.Client({
     connectionString
@@ -229,5 +294,6 @@ export async function testConnection() {
   }
 }
 
+// TODO: Debugging functions
 //TODO: debugging purposes only, this file should not normally be run directly
 //testConnection();

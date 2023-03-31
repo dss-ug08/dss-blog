@@ -12,20 +12,22 @@
   /** @type {import("./$types").ActionData} */
   export let form;
 
-  if (data.user) {
 
-    throw redirect(307, "/");
+  if (data.user) {
+    console.log("Logged in already");
+    throw redirect(302, "/posts");
+    window.location.href = "/posts";
   }
 
-  let errorMessage = "";
-  let successMessage = "";
 
+  // Handle Form submission by user
   async function handleSubmit() {
     console.log("handleSubmit called");
     const username = usernameInput.value;
     const password = passwordInput.value;
     console.log("username:", username, "password:", password);
 
+    // Send POST request to server with provided credentials
     const response = await fetch("/auth/login", {
       method: "POST",
       headers: {
@@ -41,11 +43,12 @@
     console.log("response status:", response.status);
 
 
+    // Server response OK = Handle the login successfully
     if (response.ok) {
       console.log("User has logged in");
       const responseData = await response.json();
       const dataString = responseData.data;
-      const data = JSON.parse(dataString);
+      data = JSON.parse(dataString);
 
       console.log("data:", data);
 
@@ -56,8 +59,12 @@
 
       successMessage = jsonRM.message;
 
+      // Redirect user to the homepage after a successful login
+      // TODO: Add to user variable the user's class/info
+      window.location.href = "/";
 
     } else {
+      // If the server response is not ok, display an error message.
       const error = await response.json();
       console.log("error:", error);
       console.log("error.message:", error.body);
@@ -67,35 +74,37 @@
   }
 
 
+  // Variables to set error/success messages to display
+  let errorMessage = "";
+  let successMessage = "";
+
+  // Variables for username/password field
   let usernameInput;
   let passwordInput;
+
 
 </script>
 
 <main class="container">
   <h2>Login</h2>
-
   <!-- Add a new element to display successMessage -->
-  {#if successMessage}
+  {#if successMessage || errorMessage}
     <p class="success">{successMessage}</p>
-  {/if}
-
-  <!-- Add a new element to display errorMessage -->
-  {#if errorMessage}
     <p class="error">{errorMessage}</p>
-  {/if}
 
-  <form on:submit|preventDefault={handleSubmit}>
-    <label>
-      Username
-      <input name="username" type="text" bind:this="{usernameInput}" />
-    </label>
-    <label>
-      Password
-      <input name="password" type="password" bind:this="{passwordInput}" />
-    </label>
-    <button type="submit">Log in</button>
-  </form>
+  {:else}
+    <form on:submit|preventDefault={handleSubmit}>
+      <label>
+        Username
+        <input name="username" type="text" bind:this="{usernameInput}" />
+      </label>
+      <label>
+        Password
+        <input name="password" type="password" bind:this="{passwordInput}" />
+      </label>
+      <button type="submit">Log in</button>
+    </form>
+  {/if}
 
 </main>
 

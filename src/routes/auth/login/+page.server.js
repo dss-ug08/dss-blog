@@ -26,17 +26,21 @@ export async function load({ cookies }) {
  * Credential verification logic happens here. If a user session is validated, we should
  * return a user session value which can be saved as a cookie on the frontend, and the user
  * should be redirected to their referring page, or the homepage is none is specified.
+ *
  * @type {import("./$types").Actions}
  */
 export const actions = {
   default: async ({ request, context }) => {
+    // Parse the incoming request body to get the submitted form data
     const body = await request.arrayBuffer();
     const decodedBody = new TextDecoder().decode(body);
     const formData = querystring.parse(decodedBody);
     const { username, password } = formData;
 
+    // Verify the submitted user credentials
     const user = await verifyUserCredentials(username, password);
 
+    // If the user credentials are invalid, return a 401 status with an error message
     if (!user) {
       return {
         status: 401,
@@ -47,6 +51,7 @@ export const actions = {
       };
     }
 
+    // If the credentials are valid, create a session and return the session ID as a cookie
     const sessionId = await createSession(user.id);
 
     return {
