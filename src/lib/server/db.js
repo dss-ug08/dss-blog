@@ -17,7 +17,7 @@ const connectionString = process.env.VITE_PG_CONNECTION_STRING_LOCAL;
  * @returns {string} A 32-character long hexadecimal string representing the session ID.
  */
 function generateSessionId() {
-  return crypto.randomBytes(16).toString("hex");
+  return crypto.randomUUID()
 }
 
 /**
