@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^2.0.0",
-    "@sveltejs/kit": "^1.5.0",
+    "@sveltejs/kit": "^1.15.2",
     "dotenv": "^16.0.3",
     "prettier": "2.8.6",
     "svelte": "^3.54.0",
@@ -26,6 +26,10 @@
     "@fontsource/lora": "^4.5.13",
     "@picocss/pico": "^1.5.7",
     "bcrypt": "^5.1.0",
+    "busboy": "^1.6.0",
+    "form-data": "^4.0.0",
+    "form-data-parser": "^0.0.3",
+    "formidable": "^2.1.1",
     "pg": "^8.10.0"
   }
 }
