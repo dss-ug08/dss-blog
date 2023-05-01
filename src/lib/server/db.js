@@ -3,13 +3,14 @@ import PG from "pg";
 import crypto from "crypto";
 import { verifyPassword } from "$lib/server/auth.js";
 import dotenv from "dotenv";
+import { hashPassword } from "$lib/server/auth.js";
 
 
 // Load environment variables from the .env file
 dotenv.config();
 
 // Connection string for the PostgreSQL database
-const connectionString = process.env.VITE_PG_CONNECTION_STRING_LOCAL;
+const connectionString = process.env.VITE_PG_CONNECTION_STRING_NODNS;
 
 /**
  * Generates a random session ID using the crypto module.
@@ -46,6 +47,8 @@ export async function insertUser(username, email, passwordHash) {
     await client.end();
   }
 }
+
+
 
 /**
  * Verifies if the given username and password match a user in the users table.
@@ -99,7 +102,7 @@ export async function verifyUserCredentials(username, password) {
 /**
  * Creates a new session for the given user in the sessions table.
  *
- * @param {number} user The user ID to create the session for.
+ * @param {string} user The user ID to create the session for.
  * @returns {Promise<string>} The session ID of the created session.
  * @throws {Error} If an error occurs while creating the session.
  */
