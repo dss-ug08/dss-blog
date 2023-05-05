@@ -1,31 +1,24 @@
-import { error} from "@sveltejs/kit";
-/** 
- * This code should load an individual post's data from the database, and return it to the
- * frontend. If the post is not found, we should return an error which will be handled by
- * the +error.svelte component.
- * 
- * @returns {Promise<{post: {title: String, content: String, slug: String}}>} A post object containing the post's title, content, and slug.
- * @type {import('./$types').PageServerLoad}
-*/
-export async function load({ params }) {
-  /*
-    Code for handling posts could look something like this:
-      import getPostFromDatabase from '$lib/server/db.js';
+import { error } from "@sveltejs/kit";
+import { getPostBySlug } from "$lib/server/db.js";
 
-      const post = await getPostFromDatabase(params.slug);
- 
-      if (post) {
-        return post;
+/**
+ * Loads a post with the given slug from the database. If the post is found, its data is
+ * returned as a prop. If the post is not found, a 404 Not Found error is thrown.
+ *
+ * @param {Object} context - The context object containing the post slug.
+ * @param {Object} context.params - The object containing the post slug.
+ * @returns {Promise<{props: {data: {post: {id: number, title: string, content: string, slug: string, user_id: number, created_at: string}}}}|Error>} - A response object containing the post data as a prop or an error if the post is not found.
+ * @throws {Error} If the post is not found, a 404 Not Found error is thrown.
+ */
+export async function load({ params }) {
+  const post = await getPostBySlug(params.slug);
+
+  if (post) {
+    return {
+      props: {
+        data: { post }
       }
-    
-      throw error(404, 'Not found');
-  */
-  return {
-    // For demonstration purposes, we'll just return a dummy post.
-    post: {
-      title: "Hello world!",
-      content: "This is a dummy post.",
-      slug: params.slug,
-    },
-  };
+    };
+  }
+  throw error(404, "Not found");
 }

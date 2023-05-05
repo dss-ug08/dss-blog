@@ -10,7 +10,7 @@ import { hashPassword } from "$lib/server/auth.js";
 dotenv.config();
 
 // Connection string for the PostgreSQL database
-const connectionString = process.env.VITE_PG_CONNECTION_STRING_NODNS;
+const connectionString = process.env.VITE_PG_CONNECTION_STRING;
 
 /**
  * Generates a random session ID using the crypto module.
@@ -47,7 +47,6 @@ export async function insertUser(username, email, passwordHash) {
     await client.end();
   }
 }
-
 
 
 /**
@@ -248,6 +247,37 @@ export async function getUserByUsername(username) {
     await client.end();
   }
 }
+
+
+/**
+ * Inserts a new post into the posts table with the given title, content, slug, and user_id.
+ *
+ * @param {string} title The title of the new post.
+ * @param {string} content The content of the new post.
+ * @param {string} slug The unique slug of the new post.
+ * @param {number} user_id The ID of the user who created the post.
+ * @returns {Promise<Object | null>} The inserted post object if successful, or null if an error occurs.
+ */
+export async function createPost(title, content, slug, user_id) {
+  const client = new PG.Client({ connectionString });
+
+  try {
+    await client.connect();
+    const query = `
+      INSERT INTO posts (title, content, slug, user_id)
+      VALUES ($1, $2, $3, $4) RETURNING *;
+    `;
+    const values = [title, content, slug, user_id];
+    const result = await client.query(query, values);
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error creating post:", error);
+    return null;
+  } finally {
+    await client.end();
+  }
+}
+
 
 /**
  * Retrieves a post by its slug from the posts table.

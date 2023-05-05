@@ -1,4 +1,3 @@
-
 import querystring from "querystring";
 
 import {
@@ -31,7 +30,7 @@ export async function load({ cookies }) {
  * @type {import("./$types").Actions}
  */
 export const actions = {
-  default: async ({ request, context }) => {
+  default: async ({ request }) => {
     // Parse the incoming request body to get the submitted form data
     const body = await request.arrayBuffer();
     const decodedBody = new TextDecoder().decode(body);
@@ -54,14 +53,18 @@ export const actions = {
 
     // If the credentials are valid, create a session and return the session ID as a cookie
     const sessionId = await createSession(user.id);
+    const secure = request.headers["x-forwarded-proto"] === "https";
 
     return {
       status: 200,
       body: JSON.stringify({ message: "User logged in successfully" }),
       headers: {
         "Content-Type": "application/json",
-        "Set-Cookie": `sessionid=${sessionId}; Path=/; HttpOnly`
+        "Set-Cookie": `sessionid=${sessionId}; Path=/; HttpOnly${secure ? "; Secure" : ""}`
       }
     };
+
   }
 };
+
+
