@@ -16,7 +16,7 @@
 
   if (data.user) {
     console.log("Logged in already");
-    goto('/posts')
+    goto("/");
   }
 
 
@@ -47,6 +47,7 @@
     if (response.ok) {
       console.log("User has logged in");
       const responseData = await response.json();
+
       const dataString = responseData.data;
       data = JSON.parse(dataString);
 
@@ -61,7 +62,7 @@
 
       // Redirect user to the homepage after a successful login
       // TODO: Add to user variable the user's class/info
-      window.location.href = "/";
+      await goto('/');
 
     } else {
       // If the server response is not ok, display an error message.
