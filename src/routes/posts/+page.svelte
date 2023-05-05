@@ -11,14 +11,15 @@
 </script>
 
 <main class="container">
-  <h2>All Posts</h2>
+
   {#if Array.isArray(data.posts)}
+    <h2>All Posts</h2>
     {#each data.posts as post}
       <a href="/posts/{post.slug}"><b>{post.title}</b></a>
       <p>{post.excerpt}</p>
     {/each}
   {:else}
-    <p>No posts currently.</p>
+    <h2>No posts currently.</h2>
   {/if}
 
 
