@@ -24,24 +24,25 @@ export async function post(request) {
       return {
         status: 200,
         body: {
-          message: "Post created successfully.",
-          post
-        }
+          message: 'Post created successfully.',
+          post,
+        },
       };
     } else {
       return {
-        status: 500,
+        status: 200,
         body: {
-          message: "Error creating post."
-        }
+          message: 'No posts currently.',
+        },
       };
     }
   } else {
     return {
       status: 401,
       body: {
-        message: "User not found. Please log in to create a post."
-      }
+        message: 'User not found. Please log in to create a post.',
+      },
     };
   }
 }
+

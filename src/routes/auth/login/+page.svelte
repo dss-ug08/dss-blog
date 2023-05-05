@@ -5,6 +5,7 @@
     @see https://kit.svelte.dev/docs/form-actions
     */
   import { redirect } from "@sveltejs/kit";
+  import { goto } from "$app/navigation";
 
   /** @type {import("./$types").PageData} */
   export let data;
@@ -15,8 +16,7 @@
 
   if (data.user) {
     console.log("Logged in already");
-    throw redirect(302, "/posts");
-    window.location.href = "/posts";
+    goto('/posts')
   }
 
 

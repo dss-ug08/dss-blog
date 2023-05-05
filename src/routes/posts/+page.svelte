@@ -1,5 +1,5 @@
 <script>
-  import { error } from "$lib/error";
+  import { error } from "$lib/error.js";
 
   /*
     This page displays a list of all posts. It should ideally be paginated.
@@ -12,10 +12,15 @@
 
 <main class="container">
   <h2>All Posts</h2>
-  {#each data.posts as post}
-    <a href="/posts/{post.slug}"><b>{post.title}</b></a>
-    <p>{post.excerpt}</p>
-  {/each}
+  {#if Array.isArray(data.posts)}
+    {#each data.posts as post}
+      <a href="/posts/{post.slug}"><b>{post.title}</b></a>
+      <p>{post.excerpt}</p>
+    {/each}
+  {:else}
+    <p>No posts currently.</p>
+  {/if}
+
 
   <!--TODO: pagination-->
 </main>
