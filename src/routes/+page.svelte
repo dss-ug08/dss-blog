@@ -1,8 +1,10 @@
 <script>
   import { onMount } from "svelte";
 
-  import Test from "$cmp/Test.svelte";
+  import Meta from "$lib/components/Meta.svelte";
 </script>
+
+<Meta title="Home"/>
 
 <main class="container">
   <h2>Welcome to dss-blog!</h2>

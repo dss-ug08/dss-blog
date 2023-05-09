@@ -5,6 +5,16 @@ export const maxTitleExcerptLength = 55;
 export const maxExcerptLength = 100;
 
 /**
+ * Get the currently configured name of the site.
+ * 
+ * @returns {string} The currently configured site name.
+ */
+export function getSiteName() {
+  //TODO: Get this from the DB?
+  return 'dss-blog';
+}
+
+/**
  * Truncates a title to the specified length, adding an ellipsis if necessary.
  * This shouldn't be used on the actual post title, but rather on the title displayed in the post list.
  * 

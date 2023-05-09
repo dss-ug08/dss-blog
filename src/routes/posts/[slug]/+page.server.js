@@ -20,15 +20,15 @@ export async function load({ params }) {
   try {
     const post = await getPostBySlug(params.slug);
     const comments = await getCommentsByPostId(post.id);
-
-
+    
+    post.excerpt = Utils.truncateExcerpt(post.content);
     post.content = await Utils.sanitizeHTML(
       await marked.parse(post.content, {
         async: true,
         breaks: true,
         gfm: true,
       })
-      );
+    );
 
     return {
       post,
