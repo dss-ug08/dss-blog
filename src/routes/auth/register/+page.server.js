@@ -40,12 +40,7 @@ export const actions = {
     const existingUserByEmail = await getUserByEmail(email);
 
     if (existingUserByUsername || existingUserByEmail) {
-      return {
-        status: 400,
-        body: {
-          message: "User already exists"
-        }
-      };
+      throw error(400, "User already exists");
     }
 
     console.log("Password to hash:", password);

@@ -43,8 +43,8 @@
       successMessage = "User registered successfully";
       throw redirect(307, "/login");
     } else {
-      const error = await response.json();
-      errorMessage = error.message;
+      const resp = await response.json();
+      errorMessage = resp.error.message;
     }
   }
 

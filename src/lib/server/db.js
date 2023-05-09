@@ -377,7 +377,7 @@ export async function testConnection() {
   }
 }
 
-export async function getCommentsByPostId(postId) {
+export async function getCommentsForPostId(postId) {
   const client = new PG.Client({ connectionString });
 
   try {

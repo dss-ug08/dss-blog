@@ -1,4 +1,5 @@
 <script>
+  import Meta from "$lib/components/Meta.svelte";
   /**
    This page displays a search box, and allows users to search for posts.
    Results should be displayed if a query has been provided.
