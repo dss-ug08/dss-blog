@@ -376,21 +376,3 @@ export async function testConnection() {
     await client.end();
   }
 }
-
-export async function getCommentsByPostId(postId) {
-  const client = new PG.Client({ connectionString });
-
-  try {
-    await client.connect();
-    const query = "SELECT * FROM comments WHERE post_id = $1";
-    const result = await client.query(query, [postId]);
-
-    if (result.rows.length > 0) return result.rows;
-    else return null;
-
-  } catch (error) {
-    throw new Error(`Error fetching comments for post ID "${postId}": ${error}`);
-  } finally {
-    await client.end();
-  }
-}

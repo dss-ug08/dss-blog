@@ -1,7 +1,7 @@
 import { error } from "@sveltejs/kit";
 import { marked } from "marked";
 import * as Utils from "$lib/server/utils.js";
-import { getPostBySlug, getCommentsByPostId } from "$lib/server/db.js";
+import { getPostBySlug } from "$lib/server/db.js";
 
 /**
  * @typedef { import("$lib/types").Post } Post
@@ -20,8 +20,6 @@ export async function load({ params }) {
   try {
     const post = await getPostBySlug(params.slug);
 
-    const comments = await getCommentsByPostId(post.id);
-
     post.content = await Utils.sanitizeHTML(
       await marked.parse(post.content, {
         async: true,
@@ -31,10 +29,9 @@ export async function load({ params }) {
       );
 
     return {
-      post,
-      comments
+      post
     };
-
+    
   } catch (err) {
     throw error(404, "Not Found");
   }
