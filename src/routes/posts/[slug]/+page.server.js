@@ -20,7 +20,13 @@ export async function load({ params }) {
   try {
     const post = await getPostBySlug(params.slug);
 
-    post.content = Utils.sanitizeHTML(Marked.parse(post.content));
+    post.content = await Utils.sanitizeHTML(
+      await Marked.parse(post.content, {
+        async: true,
+        breaks: true,
+        gfm: true,
+      })
+      );
 
     return {
       post
