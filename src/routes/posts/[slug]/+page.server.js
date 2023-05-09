@@ -19,14 +19,15 @@ export async function load({ params }) {
   /** @type {Post} */
   try {
     const post = await getPostBySlug(params.slug);
-
+    
+    post.excerpt = Utils.truncateExcerpt(post.content);
     post.content = await Utils.sanitizeHTML(
       await marked.parse(post.content, {
         async: true,
         breaks: true,
         gfm: true,
       })
-      );
+    );
 
     return {
       post
