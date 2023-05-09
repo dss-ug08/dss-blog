@@ -60,3 +60,32 @@ export function sanitizeHTML(html) {
   const purify = DOMPurify(window);
   return purify.sanitize(html);
 }
+
+
+/**
+ * Sanitizes the input to prevent SQL injection and ensures the input meets basic requirements.
+ * @param {string} input The input string to sanitize.
+ * @param {number} [maxLength] The maximum allowed length of the input string.
+ * @returns {string} The sanitized input.
+ */
+export function dataSanitizeAndCheck(input, maxLength) {
+  if (input === null || input === undefined || input.trim() === '') {
+    throw new Error('Input must not be null, undefined, or empty');
+  }
+
+  if (maxLength && input.length > maxLength) {
+    throw new Error(`Input length must not exceed ${maxLength} characters`);
+  }
+
+  const escapeCharacters = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#x27;',
+    '/': '&#x2F;',
+    '`': '&#x60;'
+  };
+
+  return input.replace(/[&<>"'`/]/g, (char) => escapeCharacters[char]);
+}
