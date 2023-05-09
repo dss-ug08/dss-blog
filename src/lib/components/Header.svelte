@@ -1,4 +1,21 @@
 <script>
+  import { onMount } from 'svelte';
+  let user;
+
+  async function getUserSession() {
+    const response = await fetch("/api/auth/session", {
+      method: "GET",
+      headers: {
+        "content-type": "application/json",
+      },
+    });
+    return await response.json();
+  }
+
+  onMount(async () => {
+    let session = await getUserSession();
+    user = session.user;
+  });
 </script>
 
 <header>
@@ -10,10 +27,16 @@
       <li><a href="/search">Search</a></li>
     </ul>
     <ul>
+      {user?.username}
       <!--TODO: display user menu if user is logged in already-->
-      <li><a href="/auth/login" role="button">Log in</a></li>
-      <li><a href="/auth/register" role="button" class="secondary">Register</a>
-      </li>
+      {#if !user}
+        <li><a href="/auth/login" role="button">Log in</a></li>
+        <li>
+          <a href="/auth/register" role="button" class="secondary">Register</a>
+        </li>
+      {:else}
+        <li><a href="/auth/logout" role="button">Log out</a></li>
+      {/if}
     </ul>
   </nav>
   <hr />
