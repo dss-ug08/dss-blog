@@ -1,3 +1,6 @@
+import { JSDOM } from 'jsdom';
+import DOMPurify from 'dompurify';
+
 export const maxTitleExcerptLength = 55;
 export const maxExcerptLength = 100;
 
@@ -44,4 +47,16 @@ export function createSlug(title) {
     .toLowerCase()
     .replace(/[^\w ]+/g, "")
     .replace(/ +/g, "-");
+}
+
+/**
+ * Sanitize unsafe html to prevent XSS attacks.
+ * 
+ * @param {string} html The html to sanitize.
+ * @returns {string} The sanitized html.
+ */
+export function sanitizeHTML(html) {
+  const window = new JSDOM('').window;
+  const purify = DOMPurify(window);
+  return purify.sanitize(html);
 }

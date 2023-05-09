@@ -20,7 +20,8 @@
 
   <h3>{data.post.title}</h3>
   <p>
-    {data.post.content}
+    <!-- This is fine because the server sanitizes the output before it reaches us -->
+    {@html data.post.content}
   </p>
   <!--TODO: for development purposes, show the slug of the post here.-->
   <small>Post slug: <i>{data.post.slug}</i></small>

@@ -25,7 +25,11 @@
     "@fontsource/lato": "^4.5.10",
     "@fontsource/lora": "^4.5.13",
     "@picocss/pico": "^1.5.7",
+    "@types/marked": "^4.3.0",
     "bcrypt": "^5.1.0",
+    "dompurify": "^3.0.3",
+    "jsdom": "^22.0.0",
+    "marked": "^5.0.1",
     "pg": "^8.10.0",
     "pg-prepared": "^2.5.13"
   }

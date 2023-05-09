@@ -1,4 +1,6 @@
 import { error } from "@sveltejs/kit";
+import Marked from "marked";
+import * as Utils from "$lib/server/utils.js";
 import { getPostBySlug } from "$lib/server/db.js";
 
 /**
@@ -17,6 +19,8 @@ export async function load({ params }) {
   /** @type {Post} */
   try {
     const post = await getPostBySlug(params.slug);
+
+    post.content = Utils.sanitizeHTML(Marked.parse(post.content));
 
     return {
       post
