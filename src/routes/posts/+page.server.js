@@ -1,5 +1,6 @@
 import { error } from "@sveltejs/kit";
-import { getPosts } from "$lib/server/db.js";
+import * as DB from "$lib/server/db.js";
+import * as Utils from "$lib/server/utils.js";
 
 /**
  * @typedef {import ('$lib/types').Post} Post
@@ -13,13 +14,21 @@ import { getPosts } from "$lib/server/db.js";
  * @type {import('./$types').PageServerLoad}
  */
 export async function load({ params }) {
-  const posts = await getPosts();
+  // For pagination we can use after: id and limit: num
+  // e.g. const posts = await DB.getPosts({after: lastID, limit: 5});
+  // where lastID is the ID of the last post on the previous page.
+  const posts = await DB.getPosts();
 
+  // Truncate long post titles
+  for (let post of posts) {
+    if (post.title.length > Utils.maxTitleExcerptLength) post.title = Utils.truncateTitle(post.title);
+  }
+
+  // Generate excerpt for each post
   //TODO: This is expensive - we should generate this on post creation/update.
   for (let post of posts) {
     // If post content is greater than max, truncate and add ellipsis, otherwise return untouched.
-    let maxLength = 100;
-    post.excerpt = post.content.length > maxLength ? post.content.substring(0, maxLength) + '…' : post.content;
+    post.excerpt = Utils.truncateExcerpt(post.content);
   }
 
   return {

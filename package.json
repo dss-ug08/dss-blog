@@ -26,6 +26,7 @@
     "@fontsource/lora": "^4.5.13",
     "@picocss/pico": "^1.5.7",
     "bcrypt": "^5.1.0",
-    "pg": "^8.10.0"
+    "pg": "^8.10.0",
+    "pg-prepared": "^2.5.13"
   }
 }

@@ -1,5 +1,6 @@
 /* TODO: db functions here to allow easy db swapping */
 import PG from "pg";
+import pgprep from "pg-prepared";
 import crypto from "crypto";
 import { verifyPassword } from "$lib/server/auth.js";
 import dotenv from "dotenv";
@@ -288,20 +289,23 @@ export async function createPost(title, content, slug, user_id) {
  */
 export async function getPosts({slug, after, limit}={}) {
   // This beautiful mess allows us to dynamically add conditions to the query based on the options object.
-  const query = `SELECT * FROM POSTS 
-                ${slug ? `WHERE slug = $1` : ""} 
-                ${after ? `AND id > $2` : ""} 
-                ${limit ? `LIMIT $3` : ""}`;
-  const values = [];
-  if (slug) values.push(slug);
-  if (after) values.push(after);
-  if (limit) values.push(limit);
+  // NOTE that the query construction here does NOT use standard parameterized queries, because we need to be able to
+  // add conditions dynamically. This is still safe because pgprep still uses parameterized queries internally.
+  const query = pgprep(`SELECT * FROM POSTS 
+                ${slug ? 'WHERE slug = ${slug}' : ""} 
+                ${after ? 'AND id > ${after}' : ""} 
+                ${limit ? 'LIMIT ${limit}' : ""}`);
+  const values = {
+    slug,
+    after,
+    limit
+  };
 
   const client = new PG.Client({ connectionString });
   try {
     await client.connect();
     
-    const result = await client.query(query, values);
+    const result = await client.query(query(values));
 
     if (result.rows.length > 0) return result.rows;
     else return [];
