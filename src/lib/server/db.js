@@ -285,18 +285,30 @@ export async function createPost(title, content, slug, user_id) {
 /**
  * Retrieves an array containing posts which match any of the conditions given in the options object.
  * 
+ * @param {Object} [options] An object containing any of the following properties:
+ * @param {string} [options.slug] A string to match against the slug column - will return all posts with a slug that contains this string.
+ * @param {number} [options.after] The ID of the post to retrieve posts after.
+ * @param {number} [options.limit] The maximum number of posts to retrieve.
  * @returns {Promise<Array<Post>>} An array of post objects, if any match the criteria.
  */
-export async function getPosts({slug, after, limit}={}) {
+// @ts-ignore
+export async function getPosts({slug, title, after, limit}={}) {
+  // Error checking
+  // For now some queries are impossible without further work.
+  if (slug && title) throw new Error("Cannot query by both slug and title.");
+  if ((after ?? 0) < 0 || (limit ?? 0) < 0) throw new Error("Cannot query with negative after or limit.");
+
   // This beautiful mess allows us to dynamically add conditions to the query based on the options object.
   // NOTE that the query construction here does NOT use standard parameterized queries, because we need to be able to
   // add conditions dynamically. This is still safe because pgprep still uses parameterized queries internally.
   const query = pgprep(`SELECT * FROM POSTS 
-                ${slug ? 'WHERE slug = ${slug}' : ""} 
+                ${slug ? 'WHERE LOWER(slug) LIKE LOWER(${slug})' : ""} 
+                ${title ? 'WHERE LOWER(title) LIKE LOWER(${title})' : ""} 
                 ${after ? 'AND id > ${after}' : ""} 
                 ${limit ? 'LIMIT ${limit}' : ""}`);
   const values = {
-    slug,
+    slug: slug ? `%${slug}%` : null, // Surround with % to allow partial matches.
+    title: title ? `%${title}%` : null,
     after,
     limit
   };
