@@ -4,7 +4,7 @@
   import Meta from "$lib/components/Meta.svelte";
 </script>
 
-<Meta title="Home" description="Welcome to dss-blog!" />
+<Meta title="Home"/>
 
 <main class="container">
   <h2>Welcome to dss-blog!</h2>

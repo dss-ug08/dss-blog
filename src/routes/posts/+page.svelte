@@ -1,4 +1,5 @@
 <script>
+  import Meta from "$lib/components/Meta.svelte";
   import { error } from "$lib/error.js";
 
   /*
@@ -9,6 +10,8 @@
   /** @type {import("./$types").PageData} */
   export let data;
 </script>
+
+<Meta title="All Posts"/>
 
 <main class="container">
 

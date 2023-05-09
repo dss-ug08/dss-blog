@@ -1,4 +1,5 @@
 <script>
+  import Meta from "$lib/components/Meta.svelte";
   /**
    This page displays an individual post based on its slug.
    The slug is the unique identifier for the post, and is used to generate the URL.
@@ -8,6 +9,8 @@
   /** @type {import("./$types").PageData} */
   export let data;
 </script>
+
+<Meta title="{data.post.title}" description="{data.post.excerpt}"/>
 
 <main class="container">
   <nav aria-label="breadcrumb">

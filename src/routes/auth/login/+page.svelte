@@ -1,4 +1,5 @@
 <script>
+  import Meta from "$lib/components/Meta.svelte";
   /* 
     This page is where a user can provide credentials to get a login session.
     Authentication-only pages should be redirected here if no user session exists.
@@ -85,6 +86,8 @@
 
 
 </script>
+
+<Meta title="Login" />
 
 <main class="container">
   <h2>Login</h2>

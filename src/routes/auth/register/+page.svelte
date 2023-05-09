@@ -1,4 +1,5 @@
 <script>
+  import Meta from "$lib/components/Meta.svelte";
   /* 
     This page is where a user can provide credentials to create a new account.
     The user should then be redirected to the login page.
@@ -48,6 +49,8 @@
   }
 
 </script>
+
+<Meta title="Register" />
 
 <main class="container">
   <h2>Register</h2>

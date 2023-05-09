@@ -10,6 +10,8 @@
   export let form;
 </script>
 
+<Meta title="Search" />
+
 <main class="container">
   <h2>Search</h2>
   <form method="POST">
