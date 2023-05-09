@@ -281,6 +281,38 @@ export async function createPost(title, content, slug, user_id) {
   }
 }
 
+/**
+ * Retrieves an array containing posts which match any of the conditions given in the options object.
+ * 
+ * @returns {Promise<Array<Post>>} An array of post objects, if any match the criteria.
+ */
+export async function getPosts({slug, after, limit}={}) {
+  // This beautiful mess allows us to dynamically add conditions to the query based on the options object.
+  const query = `SELECT * FROM POSTS 
+                ${slug ? `WHERE slug = $1` : ""} 
+                ${after ? `AND id > $2` : ""} 
+                ${limit ? `LIMIT $3` : ""}`;
+  const values = [];
+  if (slug) values.push(slug);
+  if (after) values.push(after);
+  if (limit) values.push(limit);
+
+  const client = new PG.Client({ connectionString });
+  try {
+    await client.connect();
+    
+    const result = await client.query(query, values);
+
+    if (result.rows.length > 0) return result.rows;
+    else return [];
+  } catch (error) {
+    throw error; //TODO
+  } finally {
+    await client.end();
+  }
+
+  return []; // This should be impossible.
+}
 
 /**
  * Retrieves a post by its slug from the posts table.
@@ -293,7 +325,7 @@ export async function getPostBySlug(slug) {
 
   try {
     await client.connect();
-    const query = "SELECT * FROM posts WHERE slug = $1";
+    const query = "SELECT * FROM posts WHERE slug = $1 LIMIT 1";
     const result = await client.query(query, [slug]);
 
     if (result.rows.length > 0) return result.rows[0];

@@ -1,47 +1,28 @@
-import { createPost } from "$lib/server/db.js";
-import { getUserFromCookie } from "$lib/server/session.js";
+import { error } from "@sveltejs/kit";
+import { getPosts } from "$lib/server/db.js";
 
 /**
- * Handles the creation of a new post by accepting a request with title and content,
- * then creating a slug from the title, and saving the post to the database. If the
- * user is not authenticated, a 401 Unauthorized response is returned.
- *
- * @param {Object} request - The request object containing the post data.
- * @param {Object} request.body - The request body containing the title and content of the post.
- * @param {string} request.body.title - The title of the new post.
- * @param {string} request.body.content - The content of the new post.
- * @returns {Promise<{status: number, body: {message: string, post?: {id: number, title: string, content: string, slug: string, user_id: number, created_at: string}}}>} - A response object containing the status code and a message indicating the result of the post creation. If successful, the created post object will be included in the response body.
+ * @typedef {import ('$lib/types').Post} Post
  */
-async function post(request, cookies) {
-  const { title, content } = request.body;
-  const user = await getUserFromCookie('');
 
-  if (user) {
-    const slug = createSlug(title);
-    const post = await createPost(title, content, slug, user.id);
+/**
+ * Here, we load posts from the database to be displayed on the page.
+ * TODO: potentially hide posts marked as drafts from non-admin users.
+ *
+ * @returns {Promise<{posts: Array<Post>}>} An array of posts containing the post's title, excerpt, and slug.
+ * @type {import('./$types').PageServerLoad}
+ */
+export async function load({ params }) {
+  const posts = await getPosts();
 
-    if (post) {
-      return {
-        status: 200,
-        body: {
-          message: "Post created successfully.",
-          post
-        }
-      };
-    } else {
-      return {
-        status: 500,
-        body: {
-          message: "Error creating post."
-        }
-      };
-    }
-  } else {
-    return {
-      status: 401,
-      body: {
-        message: "User not found. Please log in to create a post."
-      }
-    };
+  //TODO: This is expensive - we should generate this on post creation/update.
+  for (let post of posts) {
+    // If post content is greater than max, truncate and add ellipsis, otherwise return untouched.
+    let maxLength = 100;
+    post.excerpt = post.content.length > maxLength ? post.content.substring(0, maxLength) + '…' : post.content;
   }
+
+  return {
+    posts,
+  };
 }

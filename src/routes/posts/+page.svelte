@@ -12,16 +12,14 @@
 
 <main class="container">
 
-  {#if Array.isArray(data.posts)}
     <h2>All Posts</h2>
+    {#if (!Array.isArray(data.posts) || !data.posts.length)}
+      <p>No posts found.</p>
+    {/if}
     {#each data.posts as post}
       <a href="/posts/{post.slug}"><b>{post.title}</b></a>
       <p>{post.excerpt}</p>
     {/each}
-  {:else}
-    <h2>No posts currently.</h2>
-  {/if}
-
 
   <!--TODO: pagination-->
 </main>
