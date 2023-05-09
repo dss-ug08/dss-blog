@@ -13,8 +13,9 @@ node_modules/
 
 # Env
 .env
-.env.*
+.env.database
 !.env.example
+.env.*
 
 # Build output
 dist/
