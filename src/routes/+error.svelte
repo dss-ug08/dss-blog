@@ -10,6 +10,8 @@
 
 <main class="container">
   <h2>Error {$page.status}: {$page.error?.message}</h2>
+  <p>Something went wrong while loading the page you were looking for.</p>
+  <a href="/" role="button">Go Home</a>
 </main>
 
 

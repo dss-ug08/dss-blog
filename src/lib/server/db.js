@@ -5,6 +5,9 @@ import { verifyPassword } from "$lib/server/auth.js";
 import dotenv from "dotenv";
 import { hashPassword } from "$lib/server/auth.js";
 
+/**
+ * @typedef { import("$lib/types").Post } Post
+ */
 
 // Load environment variables from the .env file
 dotenv.config();
@@ -256,7 +259,7 @@ export async function getUserByUsername(username) {
  * @param {string} content The content of the new post.
  * @param {string} slug The unique slug of the new post.
  * @param {number} user_id The ID of the user who created the post.
- * @returns {Promise<Object | null>} The inserted post object if successful, or null if an error occurs.
+ * @returns {Promise<Post | null>} The inserted post object if successful, or null if an error occurs.
  */
 export async function createPost(title, content, slug, user_id) {
   const client = new PG.Client({ connectionString });
@@ -272,7 +275,7 @@ export async function createPost(title, content, slug, user_id) {
     return result.rows[0];
   } catch (error) {
     console.error("Error creating post:", error);
-    return null;
+    return null; //TODO: throw this instead
   } finally {
     await client.end();
   }
@@ -283,7 +286,7 @@ export async function createPost(title, content, slug, user_id) {
  * Retrieves a post by its slug from the posts table.
  *
  * @param {string} slug The slug of the post to look up.
- * @returns {Promise<Object | null>} The post object if found, or null if no post with the given slug is found.
+ * @returns {Promise<Post>} The post object.
  */
 export async function getPostBySlug(slug) {
   const client = new PG.Client({ connectionString });
@@ -293,14 +296,11 @@ export async function getPostBySlug(slug) {
     const query = "SELECT * FROM posts WHERE slug = $1";
     const result = await client.query(query, [slug]);
 
-    if (result.rows.length > 0) {
-      return result.rows[0];
-    } else {
-      return null;
-    }
+    if (result.rows.length > 0) return result.rows[0];
+    else throw new Error(`No post found for slug "${slug}"`);
+    
   } catch (error) {
-    console.error("Error fetching post by slug:", error);
-    return null;
+    throw new Error(`Error fetching post for slug "${slug}": ${error}`);
   } finally {
     await client.end();
   }
@@ -326,7 +326,3 @@ export async function testConnection() {
     await client.end();
   }
 }
-
-// TODO: Debugging functions
-//TODO: debugging purposes only, this file should not normally be run directly
-//testConnection();
