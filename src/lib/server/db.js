@@ -301,11 +301,13 @@ export async function getPosts({slug, title, after, limit}={}) {
   // This beautiful mess allows us to dynamically add conditions to the query based on the options object.
   // NOTE that the query construction here does NOT use standard parameterized queries, because we need to be able to
   // add conditions dynamically. This is still safe because pgprep still uses parameterized queries internally.
-  const query = pgprep(`SELECT * FROM POSTS 
+  const query = pgprep(`SELECT * FROM posts
                 ${slug ? 'WHERE LOWER(slug) LIKE LOWER(${slug})' : ""} 
                 ${title ? 'WHERE LOWER(title) LIKE LOWER(${title})' : ""} 
                 ${after ? 'AND id > ${after}' : ""} 
-                ${limit ? 'LIMIT ${limit}' : ""}`);
+                ${limit ? 'LIMIT ${limit}' : ""} 
+                ORDER BY updated_at DESC` //TODO: add sorting options
+                );
   const values = {
     slug: slug ? `%${slug}%` : null, // Surround with % to allow partial matches.
     title: title ? `%${title}%` : null,

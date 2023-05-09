@@ -29,6 +29,19 @@ export function truncateExcerpt(content) {
  * @param {number} [maxLength=255] The maximum allowed length of the text. Default is 255.
  * @returns {boolean} True if the text is within the limit, false otherwise.
  */
-function textLimitCheck(text, maxLength = 255) {
+export function textLimitCheck(text, maxLength = 255) {
   return text.length <= maxLength;
+}
+
+/**
+ * Creates a URL-friendly slug from the given title.
+ *
+ * @param {string} title - The title to be converted into a slug.
+ * @returns {string} The generated slug.
+ */
+export function createSlug(title) {
+  return title
+    .toLowerCase()
+    .replace(/[^\w ]+/g, "")
+    .replace(/ +/g, "-");
 }
