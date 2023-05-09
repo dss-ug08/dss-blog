@@ -29,7 +29,23 @@
   <!--TODO: for development purposes, show the slug of the post here.-->
   <small>Post slug: <i>{data.post.slug}</i></small>
 </main>
+<!-- Comments --->
 
+<section class="container secondary">
+  <h4><u>Comments</u></h4>
+
+  {#if data.comments != null && data.comments.length > 0}
+    {#each data.comments as comment}
+      <div>
+        <p>{comment.content}</p>
+        <!-- Display additional information like the creation date -->
+        <small>Commented on: {new Date(comment.created_at).toLocaleString()}</small>
+      </div>
+    {/each}
+  {:else}
+    <p>No comments found for this post.</p>
+  {/if}
+</section>
 <style>
   small {
     color: var(--muted-color);
