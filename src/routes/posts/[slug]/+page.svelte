@@ -21,8 +21,8 @@
     </ul>
   </nav>
 
-  <h3>{data.post.title}</h3>
-  <p>
+  <h1>{data.post.title}</h1>
+  <p class="prose">
     <!-- This is fine because the server sanitizes the output before it reaches us -->
     {@html data.post.content}
   </p>

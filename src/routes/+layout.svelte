@@ -2,7 +2,7 @@
   import Header from "$lib/components/Header.svelte";
   import Footer from "$lib/components/Footer.svelte";
   import "@picocss/pico";
-  import "$lib/css/global.css";
+  import "$lib/app.css";
 </script>
 
 <Header />
@@ -14,7 +14,6 @@
 <slot></slot>
 
 <Footer />
-
 
 <style>
 </style>
