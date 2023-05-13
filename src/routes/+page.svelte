@@ -1,27 +1,29 @@
 <script>
-  import { onMount } from "svelte";
-
   import Meta from "$lib/components/Meta.svelte";
+  import Hero from "$lib/components/Hero.svelte";
+
+  import { onMount } from "svelte";
 </script>
 
 <Meta title="Home"/>
 
 <main>
-  <div class="hero min-h-screen bg-base-200">
-    <div class="hero-content text-center">
-      <div class="max-w-md">
-        <h1 class="text-5xl font-bold">Welcome to dss-blog!</h1>
-        <p class="py-6">
-          <a href="/auth/login">Login</a><br />
-          <a href="/auth/register">Register</a><br />
-          <a href="/search">Search</a><br />
-          <a href="/posts">Posts</a><br />
-          <a href="/posts/test">Test Post</a><br />
-        </p>
-        <!--<button class="btn btn-primary">Get Started</button>-->
-      </div>
-    </div>
-  </div>
+  <Hero screen={true}>
+    <span slot="title">Welcome to dss-blog!</span>
+
+    <p>
+      <b>dss-blog is an example blog site built with SvelteKit designed with Secure Software Development principles in mind.</b><br />
+      Here are some links to pages, for ease of development:
+    </p>
+
+    <span slot="buttons">
+      <a href="/auth/login" class="btn btn-primary">Login</a>
+      <a href="/auth/register" class="btn btn-primary">Register</a>
+      <a href="/search" class="btn btn-primary">Search</a>
+      <a href="/posts" class="btn btn-primary">Posts</a>
+      <a href="/posts/test" class="btn btn-primary">Test Post</a>
+    </span>
+  </Hero>
 </main>
 
 <style></style>
