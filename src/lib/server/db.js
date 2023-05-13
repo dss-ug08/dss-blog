@@ -377,6 +377,12 @@ export async function testConnection() {
   }
 }
 
+/**
+ * Get user comments for the specified post ID
+ * 
+ * @param {number} postId The post ID to get comments for
+ * @returns {Promise<Array<Object>>} An array of comment objects, if any match the criteria.
+ */
 export async function getCommentsForPostId(postId) {
   const client = new PG.Client({ connectionString });
 
@@ -386,7 +392,7 @@ export async function getCommentsForPostId(postId) {
     const result = await client.query(query, [postId]);
 
     if (result.rows.length > 0) return result.rows;
-    else return null;
+    else return [];
 
   } catch (error) {
     throw new Error(`Error fetching comments for post ID "${postId}": ${error}`);

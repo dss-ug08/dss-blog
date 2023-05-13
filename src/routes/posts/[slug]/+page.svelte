@@ -10,27 +10,46 @@
   export let data;
 </script>
 
-<Meta title="{data.post.title}" description="{data.post.excerpt}"/>
+<Meta title={data.post.title} description={data.post.excerpt} />
 
-<main class="container">
-  <nav aria-label="breadcrumb">
+<main class="container sm m-auto">
+  <div class="breadcrumbs">
     <ul>
       <li><a href="/">Home</a></li>
       <li><a href="/posts">Posts</a></li>
       <li>{data.post.title}</li>
     </ul>
-  </nav>
+  </div>
 
-  <h1>{data.post.title}</h1>
-  <p class="prose">
+  <div class="postheader pb-5">
+    <h1 class="text-5xl font-extrabold pb-5">{data.post.title}</h1>
+
+    <span class="author flex gap-1">
+      <div class="avatar placeholder">
+        <div class="bg-neutral-focus text-neutral-content rounded-full w-12">
+          <span>AU</span>
+        </div>
+      </div>
+      <p>
+        <!--TODO: add author name and image-->
+        <b>Author Name</b><br />
+        <small
+          >Posted on: {new Date(data.post.created_at).toLocaleString()}</small
+        >
+      </p>
+    </span>
+  </div>
+
+  <p class="prose max-w-none">
     <!-- This is fine because the server sanitizes the output before it reaches us -->
     {@html data.post.content}
   </p>
   <!--TODO: for development purposes, show the slug of the post here.-->
   <small>Post slug: <i>{data.post.slug}</i></small>
 </main>
-<!-- Comments --->
 
+<!-- Comments --->
+<!--TODO: tailwind update-->
 <section class="container secondary">
   <h4><u>Comments</u></h4>
 
@@ -39,15 +58,23 @@
       <div>
         <p>{comment.content}</p>
         <!-- Display additional information like the creation date -->
-        <small>Commented on: {new Date(comment.created_at).toLocaleString()}</small>
+        <small
+          >Commented on: {new Date(comment.created_at).toLocaleString()}</small
+        >
       </div>
     {/each}
   {:else}
     <p>No comments found for this post.</p>
   {/if}
 </section>
+
 <style>
   small {
     color: var(--muted-color);
+  }
+
+  /* Auto center images */
+  :global(.prose img) {
+    margin: auto;
   }
 </style>

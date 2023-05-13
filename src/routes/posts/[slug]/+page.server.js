@@ -11,7 +11,7 @@ import { getPostBySlug, getCommentsForPostId } from "$lib/server/db.js";
  * Loads a post with the given slug from the database. If the post is found, its data is
  * returned, otherwise a 404 Not Found error is thrown.
  *
- * @returns {Promise<{post: Post}>} - A response object containing the post data or an error if the post is not found.
+ * @returns {Promise<{post: Post, comments: ArrayLike<Object>}>} - A response object containing the post data or an error if the post is not found.
  * @throws {Error} If the post is not found, a 404 Not Found error is thrown.
  * @type {import('./$types').PageServerLoad}
  */

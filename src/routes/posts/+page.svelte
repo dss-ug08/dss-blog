@@ -16,27 +16,30 @@
 
 <main class="container">
 
-    <h2 class="text-2xl">All Posts</h2>
+    <h2 class="text-4xl">All Posts</h2>
     {#if (!Array.isArray(data.posts) || !data.posts.length)}
-      <p>No posts found.</p>
-    {/if}
-    {#each data.posts as post}
       <Card>
-        <span slot="title">
-          <a href="/posts/{post.slug}">
-            <b>{post.title}</b>
-          </a>
-        </span>
-
-        <p>{post.excerpt}</p>
-
-        <!--
-        <span slot="buttons">
-          <a href="/posts/{post.slug}" class="btn btn-primary">Read More</a>
-        </span>
-        -->
+        <p slot="title">No posts found.</p>
       </Card>
-    {/each}
+    {:else}
+      {#each data.posts as post}
+        <Card>
+          <span slot="title">
+            <a href="/posts/{post.slug}">
+              <b>{post.title}</b>
+            </a>
+          </span>
+
+          <p>{post.excerpt}</p>
+
+          <!--
+          <span slot="buttons">
+            <a href="/posts/{post.slug}" class="btn btn-primary">Read More</a>
+          </span>
+          -->
+        </Card>
+      {/each}
+    {/if}
 
   <!--TODO: pagination-->
 </main>
