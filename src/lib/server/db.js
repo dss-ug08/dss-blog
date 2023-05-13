@@ -78,14 +78,10 @@ export async function verifyUserCredentials(username, password) {
     const values = [username];
     const result = await client.query(query, values);
 
-    console.log("Query result:", result);
-
     if (result.rowCount > 0) {
       const user = result.rows[0];
-      console.log("User found:", user);
 
       const passwordMatches = await verifyPassword(password, user.password_hash);
-      console.log("Password matches:", passwordMatches);
 
       if (passwordMatches) {
 

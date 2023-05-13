@@ -12,11 +12,13 @@ export async function handle({ request, event, resolve }) {
 
 
   // User IP retrieval
-  const clientIp =  request.getClientAddress();
+  const clientIp =  event.remoteAddress;
   console.log(clientIp)
 
+  console.log(request);
+
   // Add the IP to request.locals
-  request.locals.ip = clientIp;
+  // request.locals.ip = clientIp;
 
   // Continue handling the request
 
