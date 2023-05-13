@@ -4,7 +4,7 @@
   export let data;
 </script>
 
-<Meta title="Admin Dashboard" />
+<Meta title="User Management" />
 
 <main class="container sm flex flex-col items-center m-auto p-5">
   <h1 class="text-4xl mb-5">User Management</h1>
@@ -62,6 +62,7 @@
       </tfoot>
       
     </table>
+    <a href="/admin" class="btn btn-outline mt-5">Back</a>
   </div>
 </main>
 
