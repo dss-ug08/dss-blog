@@ -1,5 +1,6 @@
 <script>
   import Meta from "$lib/components/Meta.svelte";
+  import Card from "$lib/components/Card.svelte";
   import { error } from "$lib/error.js";
 
   /*
@@ -15,13 +16,26 @@
 
 <main class="container">
 
-    <h2>All Posts</h2>
+    <h2 class="text-2xl">All Posts</h2>
     {#if (!Array.isArray(data.posts) || !data.posts.length)}
       <p>No posts found.</p>
     {/if}
     {#each data.posts as post}
-      <a href="/posts/{post.slug}"><b>{post.title}</b></a>
-      <p>{post.excerpt}</p>
+      <Card>
+        <span slot="title">
+          <a href="/posts/{post.slug}">
+            <b>{post.title}</b>
+          </a>
+        </span>
+
+        <p>{post.excerpt}</p>
+
+        <!--
+        <span slot="buttons">
+          <a href="/posts/{post.slug}" class="btn btn-primary">Read More</a>
+        </span>
+        -->
+      </Card>
     {/each}
 
   <!--TODO: pagination-->

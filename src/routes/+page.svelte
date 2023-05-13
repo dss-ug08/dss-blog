@@ -21,7 +21,7 @@
       <a href="/auth/register" class="btn btn-primary">Register</a>
       <a href="/search" class="btn btn-primary">Search</a>
       <a href="/posts" class="btn btn-primary">Posts</a>
-      <a href="/posts/test" class="btn btn-primary">Test Post</a>
+      <a href="/posts/markdowntest" class="btn btn-primary">Test Post</a>
     </span>
   </Hero>
 </main>
