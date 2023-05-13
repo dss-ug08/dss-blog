@@ -3,9 +3,13 @@ import * as DB from "$lib/server/db.js";
 import * as Utils from "$lib/server/utils.js";
 
 /**
- * //TODO
+ * @typedef {import('./$types').User} User
+ */
+
+/**
+ * Load users from the database for the admin users page.
  *
- * @returns {} //TODO
+ * @returns {Promise<ArrayLike<User>>} An array of users.
  * @type {import('../$types').PageServerLoad}
  */
 export async function load({ params }) {

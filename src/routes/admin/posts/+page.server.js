@@ -3,9 +3,14 @@ import * as DB from "$lib/server/db.js";
 import * as Utils from "$lib/server/utils.js";
 
 /**
- * //TODO
+ * @typedef {import('./$types').Post} Post
+ * @typedef {import('./$types').User} User
+ */
+
+/**
+ * Load posts and users from the database for the admin posts page.
  *
- * @returns {} //TODO
+ * @returns {Promise<{posts: ArrayLike<Post>, authors: ArrayLike<User>}>} An array of posts and users.
  * @type {import('../$types').PageServerLoad}
  */
 export async function load({ params }) {
