@@ -8,9 +8,21 @@ const securityHeaders = {
   //'X-Content-Type-Options': 'nosniff',              // Prevents browsers from trying to guess ("sniff") the MIME type of content //TODO: check if this breaks app
 };
 
-export async function handle({ event, resolve }) {
-  const response = await resolve(event);
+export async function handle({ request, event, resolve }) {
 
+
+  // User IP retrieval
+  const clientIp =  request.getClientAddress();
+  console.log(clientIp)
+
+  // Add the IP to request.locals
+  request.locals.ip = clientIp;
+
+  // Continue handling the request
+
+
+  // Security Headers
+  const response = await resolve(event);
   Object.entries(securityHeaders).forEach(([header, value]) => response.headers.set(header, value));
 
   return response;
