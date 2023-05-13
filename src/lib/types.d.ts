@@ -15,3 +15,13 @@ export type Comment = {
   user_id: number;
   created_at: string;
 };
+
+export type User = {
+  id: number;
+  username: string;
+  email: string;
+  password_hash?: string;
+  created_at: string;
+  updated_at: string;
+  is_admin: boolean;
+};
