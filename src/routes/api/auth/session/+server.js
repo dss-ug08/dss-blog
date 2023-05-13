@@ -18,3 +18,19 @@ export async function GET({ url, cookies }) {
     }
   });
 }
+
+//TODO: this is duplicated by, and may be moved to, the /auth/logout route
+/** @type {import('./$types').RequestHandler}*/
+export async function DELETE({ url, cookies }) {
+  const sessionId = cookies.get("sessionid");
+  if (!sessionId) throw error(401, "Unauthorized");
+
+  const user = await getUserFromSession(sessionId);
+  if (!user.id) throw error(401, "Unauthorized");
+
+  cookies.delete("sessionid", { path: "/" });
+
+  return json({
+    message: "Logged out successfully."
+  });
+}
