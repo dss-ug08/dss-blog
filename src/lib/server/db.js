@@ -111,13 +111,14 @@ export async function verifyUserCredentials(username, password) {
  */
 export async function createSession(user, userIp) {
   const client = new PG.Client({ connectionString });
+
+  // TODO: DEBUG message
   console.log(user, userIp)
+
   try {
     await client.connect();
     const sessionId = generateSessionId();
     const expiresAt = calculateSessionExpiration();
-
-    console.log(sessionId)
 
     // Create a new session in the sessions table
     const query = `INSERT INTO sessions (session_id, user_id, expires_at) VALUES ($1, $2, $3)`;
@@ -125,8 +126,8 @@ export async function createSession(user, userIp) {
     await client.query(query, values);
 
     // Record the IP address associated with this session
-    const ipQuery = `INSERT INTO session_ips (session_id, ip_address) VALUES ($1, $2)`;
-    await client.query(ipQuery, [sessionId, userIp]);
+    // const ipQuery = `INSERT INTO session_ips (session_id, ip_address) VALUES ($1, $2)`;
+    // await client.query(ipQuery, [sessionId, userIp]);
 
 
     return sessionId;

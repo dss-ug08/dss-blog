@@ -7,20 +7,21 @@ const securityHeaders = {
   'X-XSS-Protection': '1; mode=block',              // Prevents pages from loading when they detect reflected XSS attacks (depreciated in favor of CSP)
   //'X-Content-Type-Options': 'nosniff',              // Prevents browsers from trying to guess ("sniff") the MIME type of content //TODO: check if this breaks app
 };
-
+/** @type {import('@sveltejs/kit').Handle} */
 export async function handle({ request, event, resolve }) {
 
 
   // User IP retrieval
-  const clientIp =  event.remoteAddress;
-  console.log(clientIp)
+  const clientIp = event.headers;
+  console.log("IP: " + clientIp)
 
-  console.log(request);
+  console.log("Request Obj Contents: " + request);
+
+  console.log("Event Contents: " + event);
+
 
   // Add the IP to request.locals
   // request.locals.ip = clientIp;
-
-  // Continue handling the request
 
 
   // Security Headers

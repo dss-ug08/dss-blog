@@ -23,10 +23,8 @@
 
   // Handle Form submission by user
   async function handleSubmit() {
-    console.log("handleSubmit called");
     const username = usernameInput.value;
     const password = passwordInput.value;
-    console.log("username:", username, "password:", password);
 
     // Send POST request to server with provided credentials
     const response = await fetch("/auth/login", {
@@ -40,10 +38,6 @@
       })
     });
 
-    console.log("response:", response);
-    console.log("response status:", response.status);
-
-
     // Server response OK = Handle the login successfully
     if (response.ok) {
       console.log("User has logged in");
@@ -52,12 +46,9 @@
       const dataString = responseData.data;
       data = JSON.parse(dataString);
 
-      console.log("data:", data);
-
       const returnMessage = data[2];
       const jsonRM = JSON.parse(returnMessage);
       console.log(jsonRM.message);
-      console.log();
 
       successMessage = jsonRM.message;
 
@@ -74,8 +65,6 @@
     }
 
   }
-
-
 
   // Variables to set error/success messages to display
   let errorMessage = "";
