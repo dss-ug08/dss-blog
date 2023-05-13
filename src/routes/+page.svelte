@@ -22,6 +22,7 @@
       <a href="/search" class="btn btn-primary">Search</a>
       <a href="/posts" class="btn btn-primary">Posts</a>
       <a href="/posts/markdowntest" class="btn btn-primary">Test Post</a>
+      <a href="/admin" class="btn btn-secondary">Admin Dashboard</a>
     </span>
   </Hero>
 </main>

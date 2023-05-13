@@ -402,3 +402,30 @@ export async function getCommentsForPostId(postId) {
     await client.end();
   }
 }
+
+/**
+ * Gets various interesting statistics about the blog for display on the frontend.
+ * 
+ * @returns {Promise<{users: number, posts: number, comments: number}>} An object containing the number of users, posts, and comments in the database.
+ */
+export async function getStats() {
+  const client = new PG.Client({ connectionString });
+  
+  try {
+    await client.connect();
+    const query = `SELECT
+    (SELECT COUNT(*) FROM users) AS users,
+    (SELECT COUNT(*) FROM posts) AS posts,
+    (SELECT COUNT(*) FROM comments) AS comments;`;
+    const result = await client.query(query);
+
+    if (result.rows.length <= 0) throw new Error("No stats found.");
+
+    return result.rows[0];
+  
+  } catch (error) {
+    throw new Error(`Error fetching stats from DB: ${error}`);
+  } finally {
+    await client.end();
+  }
+}
