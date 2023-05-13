@@ -8,6 +8,7 @@ import { hashPassword } from "$lib/server/auth.js";
 
 /**
  * @typedef { import("$lib/types").Post } Post
+ * @typedef { import("$lib/types").Comment } Comment
  */
 
 // Load environment variables from the .env file
@@ -381,7 +382,7 @@ export async function testConnection() {
  * Get user comments for the specified post ID
  * 
  * @param {number} postId The post ID to get comments for
- * @returns {Promise<Array<Object>>} An array of comment objects, if any match the criteria.
+ * @returns {Promise<Array<Comment>>} An array of comment objects, if any match the criteria.
  */
 export async function getCommentsForPostId(postId) {
   const client = new PG.Client({ connectionString });
