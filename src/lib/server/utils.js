@@ -2,7 +2,7 @@ import { JSDOM } from 'jsdom';
 import DOMPurify from 'dompurify';
 
 export const maxTitleExcerptLength = 55;
-export const maxExcerptLength = 100;
+export const maxExcerptLength = 55; // Was 150 characters, now 55 words as rec'd by Wordpress
 
 /**
  * Get the currently configured name of the site.
@@ -32,7 +32,24 @@ export function truncateTitle(title) {
  * @returns {string} The truncated content.
  */
 export function truncateExcerpt(content) {
-  return content.length > maxExcerptLength ? content.substring(0, maxExcerptLength) + '…' : content;
+  // TODO: this should probably still cap to a certain character length
+  //return content.length > maxExcerptLength ? content.substring(0, maxExcerptLength) + '…' : content;
+  return truncateStringToWordCount(content, maxExcerptLength);
+}
+
+/**
+ * Truncate a string to the specified number of words.
+ * 
+ * @param {string} inputString The string to truncate.
+ * @param {number} wordCount The number of words to truncate to.
+ * @returns 
+ */
+export function truncateStringToWordCount(inputString, wordCount) {
+  const words = inputString.split(' ');
+
+  if (words.length <= wordCount) return inputString;
+
+  return words.slice(0, wordCount).join(' ') + '…';
 }
 
 /**
@@ -98,4 +115,48 @@ export function dataSanitizeAndCheck(input, maxLength) {
   };
 
   return input.replace(/[&<>"'`/]/g, (char) => escapeCharacters[char]);
+}
+
+/**
+ * Strips the markdown from a string, outputting plain text.
+ * 
+ * @param {string} markdown The input string containing markdown to be stripped.
+ * @returns {string} The plain text output.
+ * @see https://stackoverflow.com/a/74977142
+ */
+export function mdToPlaintext(markdown) {
+  // Replace bold or italic text with plain text
+  markdown = markdown.replace(/\*{1,2}(.+?)\*{1,2}/gm, '');
+  markdown = markdown.replace(/\_{1,2}(.+?)\_{1,2}/gm, '');
+
+  // Replace strikethrough text with plain text
+  markdown = markdown.replace(/~~(.+?)~~/gm, '');
+
+  // Replace inline code with plain text
+  markdown = markdown.replace(/`(.+?)`/gm, '');
+
+  // Replace codeblocks with plain text
+  markdown = markdown.replace(/```(.+?)```/gm, '');
+
+  // Remove images
+  markdown = markdown.replace(/!\[(.+?)\]\(.+?\)/gm, '');
+
+  // Replace links with plain text
+  markdown = markdown.replace(/\[(.+?)\]\(.+?\)/gm, '$1');
+
+  // Replace headings with plain text
+  markdown = markdown.replace(/#{1,6}\s+(.+?)\s*$/gm, '$1');
+  markdown = markdown.replace(/={3,}/gm, '');
+  markdown = markdown.replace(/-{3,}/gm, '');
+
+  // Remove blockquotes
+  markdown = markdown.replace(/^\s*>\s+(.+?)\s*$/gm, '');
+
+  // Remove lists
+  markdown = markdown.replace(/^\s*[\*\-+]\s+(.+?)\s*$/gm, '');
+
+  // Remove horizontal rules
+  markdown = markdown.replace(/^\s*[\*\-+]\s*$/gm, '');
+
+  return markdown;
 }

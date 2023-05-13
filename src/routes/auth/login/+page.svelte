@@ -89,26 +89,31 @@
 
 <Meta title="Login" />
 
-<main class="container">
-  <h2>Login</h2>
-  <!-- Add a new element to display successMessage -->
+<main class="container m-auto flex flex-col items-center my-5">
+  <h2 class="text-4xl mb-5">Login</h2>
+  
   {#if successMessage || errorMessage}
     <p class="success">{successMessage}</p>
     <p class="error">{errorMessage}</p>
-
-  {:else}
-    <form on:submit|preventDefault={handleSubmit}>
-      <label>
-        Username
-        <input name="username" type="text" bind:this="{usernameInput}" />
-      </label>
-      <label>
-        Password
-        <input name="password" type="password" bind:this="{passwordInput}" />
-      </label>
-      <button type="submit">Log in</button>
-    </form>
   {/if}
+
+  <form on:submit|preventDefault={handleSubmit}>
+    <div class="form-control w-full max-w-xs">
+      <label class="label" for="username">
+        <span class="label-text">Username</span>
+      </label>
+      <input id="username" name="username" type="text" class="input input-bordered w-full max-w-xs" bind:this="{usernameInput}" />
+    </div>
+    <div class="form-control w-full max-w-xs">
+      <label for="password">
+        <span class="label-text">Password</span>
+      </label>
+      <input id="password" name="password" type="password" class="input input-bordered w-full max-w-xs" bind:this="{passwordInput}" />
+    </div>
+    <div class="form-control w-full max-w-xs mt-5">
+      <button type="submit" class="btn btn-primary">Log in</button>
+    </div>
+  </form>
 
 </main>
 

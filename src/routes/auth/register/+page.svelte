@@ -52,30 +52,37 @@
 
 <Meta title="Register" />
 
-<main class="container">
-  <h2>Register</h2>
-  {#if errorMessage}
+<main class="container m-auto flex flex-col items-center my-5">
+  <h2 class="text-4xl mb-5">Register</h2>
+  
+  {#if successMessage || errorMessage}
+    <p class="success">{successMessage}</p>
     <p class="error">{errorMessage}</p>
   {/if}
-  {#if successMessage}
-    <p class="success">{successMessage}</p>
-  {:else}
-    <form on:submit|preventDefault="{handleSubmit}">
-      <label>
-        Username
-        <input name="username" type="text" required />
+
+  <form on:submit|preventDefault="{handleSubmit}">
+    <div class="form-control w-full max-w-xs">
+      <label class="label" for="username">
+        <span class="label-text">Username</span>
       </label>
-      <label>
-        Email
-        <input name="email" type="email" required />
+      <input id="username" name="username" type="text" required class="input input-bordered w-full max-w-xs" />
+    </div>
+    <div class="form-control w-full max-w-xs">
+      <label class="label" for="email">
+        <span class="label-text">Email</span>
       </label>
-      <label>
-        Password
-        <input name="password" type="password" required />
+      <input id="email" name="email" type="email" required class="input input-bordered w-full max-w-xs" />
+    </div>
+    <div class="form-control w-full max-w-xs">
+      <label class="label" for="password">
+        <span class="label-text">Password</span>
       </label>
-      <button>Create account</button>
-    </form>
-  {/if}
+      <input id="password" name="password" type="password" required class="input input-bordered w-full max-w-xs" />
+    </div>
+    <div class="form-control w-full max-w-xs mt-5">
+      <button type="submit" class="btn btn-primary">Create account</button>
+    </div>
+  </form>
 </main>
 
 <style>

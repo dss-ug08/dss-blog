@@ -8,6 +8,8 @@ import { hashPassword } from "$lib/server/auth.js";
 
 /**
  * @typedef { import("$lib/types").Post } Post
+ * @typedef { import("$lib/types").Comment } Comment
+ * @typedef { import("$lib/types").User } User
  */
 
 // Load environment variables from the .env file
@@ -168,7 +170,7 @@ export async function destroySession(sessionId) {
  * Retrieves the user data associated with the given session ID from the sessions and users tables.
  *
  * @param {string} sessionId The session ID to look up.
- * @returns {Promise<Object | null>} The user object if found, or null if the session is not found or expired.
+ * @returns {Promise<User>} The user object if found, or null if the session is not found or expired.
  */
 export async function getUserFromSession(sessionId) {
   const client = new PG.Client({ connectionString });
@@ -377,6 +379,12 @@ export async function testConnection() {
   }
 }
 
+/**
+ * Get user comments for the specified post ID
+ * 
+ * @param {number} postId The post ID to get comments for
+ * @returns {Promise<Array<Comment>>} An array of comment objects, if any match the criteria.
+ */
 export async function getCommentsForPostId(postId) {
   const client = new PG.Client({ connectionString });
 
@@ -386,7 +394,7 @@ export async function getCommentsForPostId(postId) {
     const result = await client.query(query, [postId]);
 
     if (result.rows.length > 0) return result.rows;
-    else return null;
+    else return [];
 
   } catch (error) {
     throw new Error(`Error fetching comments for post ID "${postId}": ${error}`);

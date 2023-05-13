@@ -1,4 +1,6 @@
 import { error } from "@sveltejs/kit";
+import * as DB from "$lib/server/db.js";
+import * as Utils from "$lib/server/utils.js";
 
 /**
  * Here, we search through posts in the database based on a provided search term.
@@ -12,13 +14,27 @@ import { error } from "@sveltejs/kit";
 export const actions = {
   default: async ({ request }) => {
     const data = await request.formData();
+    if (!data.has("query")) throw error(400, "No search query provided.");
 
-    /* TODO: search posts */
+    // @ts-ignore - handled above
+    const posts = await DB.getPosts({ slug: data.get("query") });
+
+    // Truncate long post titles
+    for (let post of posts) {
+      if (post.title.length > Utils.maxTitleExcerptLength) post.title = Utils.truncateTitle(post.title);
+    }
+
+    // Generate excerpt for each post
+    //TODO: This is expensive - we should generate this on post creation/update.
+    for (let post of posts) {
+      // If post content is greater than max, truncate and add ellipsis, otherwise return untouched.
+      post.excerpt = Utils.truncateExcerpt(
+        Utils.mdToPlaintext(post.content)
+      );
+    }
 
     return {
-      posts: [
-        /* an array of posts */
-      ],
+      posts,
       query: data.get("query") // So we can display the user's search term persistently on the form
     };
   }
