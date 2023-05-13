@@ -14,7 +14,7 @@
 
 <main class="container sm m-auto">
   <div class="breadcrumbs">
-    <ul>
+    <ul class="!whitespace-normal"> <!--TODO: breadcrumb should truncate title when it gets too big-->
       <li><a href="/">Home</a></li>
       <li><a href="/posts">Posts</a></li>
       <li>{data.post.title}</li>
@@ -50,8 +50,8 @@
 
 <!-- Comments --->
 <!--TODO: tailwind update-->
-<section class="container secondary">
-  <h4><u>Comments</u></h4>
+<section class="container sm m-auto my-10">
+  <h4 class="text-lg underline">Comments</h4>
 
   {#if data.comments != null && data.comments.length > 0}
     {#each data.comments as comment}

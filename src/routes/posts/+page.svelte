@@ -32,6 +32,7 @@
 
           <p>{post.excerpt}</p>
 
+          <a href="/posts/{post.slug}" class="link link-hover">Read More &rarr;</a>
           <!--
           <span slot="buttons">
             <a href="/posts/{post.slug}" class="btn btn-primary">Read More</a>

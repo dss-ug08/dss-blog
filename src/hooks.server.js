@@ -11,7 +11,6 @@ const securityHeaders = {
 export async function handle({ event, resolve }) {
   const response = await resolve(event);
 
-  console.error("it works!");
   Object.entries(securityHeaders).forEach(([header, value]) => response.headers.set(header, value));
 
   return response;
