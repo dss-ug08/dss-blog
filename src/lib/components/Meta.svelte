@@ -1,4 +1,7 @@
 <script>
+  // Partially inspired by https://github.com/oekazuma/svelte-meta-tags/blob/main/src/lib/MetaTags.svelte
+  // also useful https://www.reddit.com/r/discordapp/comments/82p8i6/a_basic_tutorial_on_how_to_get_the_most_out_of/
+
   //TODO: Get this from server-side
   const siteName = 'dss-blog';
   const siteDesc = "dss-blog is an example blog site built with SvelteKit designed with Secure Software Development principles in mind.";
