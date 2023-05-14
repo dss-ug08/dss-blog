@@ -1,5 +1,6 @@
 import { JSDOM } from 'jsdom';
 import DOMPurify from 'dompurify';
+import crypto from 'crypto';
 
 export const maxTitleExcerptLength = 55;
 export const maxExcerptLength = 55; // Was 150 characters, now 55 words as rec'd by Wordpress
@@ -159,4 +160,19 @@ export function mdToPlaintext(markdown) {
   markdown = markdown.replace(/^\s*[\*\-+]\s*$/gm, '');
 
   return markdown;
+}
+
+/**
+ * Generates a Gravatar URL based on the provided email address.
+ *
+ * @param {string} email - The email address to generate the Gravatar URL for.
+ * @returns {string} The generated Gravatar URL.
+ */
+export function gravatar(email) {
+  // TODO: for demo purposes, specific override for my email
+  if (email === 'jack.dssblog@mawersoft.co.uk') email = 'jack@mawersoft.co.uk';
+
+  // Use crypto module to hash email and return gravatar url
+  const hash = crypto.createHash('md5').update(email.trim().toLowerCase()).digest('hex');
+  return `https://www.gravatar.com/avatar/${hash}?d=retro`;
 }

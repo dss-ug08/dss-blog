@@ -1,7 +1,7 @@
 import { error } from "@sveltejs/kit";
 import { marked } from "marked";
 import * as Utils from "$lib/server/utils.js";
-import { getPostBySlug, getCommentsForPostId } from "$lib/server/db.js";
+import * as DB from "$lib/server/db.js";
 
 /**
  * @typedef { import("$lib/types").Post } Post
@@ -19,8 +19,8 @@ import { getPostBySlug, getCommentsForPostId } from "$lib/server/db.js";
 export async function load({ params }) {
   /** @type {Post} */
   try {
-    const post = await getPostBySlug(params.slug);
-    const comments = await getCommentsForPostId(post.id);
+    const post = await DB.getPostBySlug(params.slug);
+    const comments = await DB.getCommentsForPostId(post.id);
     
     post.excerpt = Utils.truncateExcerpt(post.content);
     post.content = await Utils.sanitizeHTML(
@@ -30,6 +30,8 @@ export async function load({ params }) {
         gfm: true,
       })
     );
+
+    post.author_avatar = await Utils.gravatar(post.author_email);
 
     return {
       post,

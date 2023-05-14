@@ -291,10 +291,11 @@ export async function createPost(title, content, slug, user_id) {
  * @param {string} [options.slug] A string to match against the slug column - will return all posts with a slug that contains this string.
  * @param {number} [options.after] The ID of the post to retrieve posts after.
  * @param {number} [options.limit] The maximum number of posts to retrieve.
+ * @param {boolean} [options.withAuthor] Whether to include the author's username and email in the returned post objects.
  * @returns {Promise<Array<Post>>} An array of post objects, if any match the criteria.
  */
 // @ts-ignore
-export async function getPosts({slug, title, after, limit}={}) {
+export async function getPosts({slug, title, after, limit, withAuthor=false}={}) {
   // Error checking
   // For now some queries are impossible without further work.
   if (slug && title) throw new Error("Cannot query by both slug and title.");
@@ -303,14 +304,17 @@ export async function getPosts({slug, title, after, limit}={}) {
   // This beautiful mess allows us to dynamically add conditions to the query based on the options object.
   // NOTE that the query construction here does NOT use standard parameterized queries, because we need to be able to
   // add conditions dynamically. This is still safe because pgprep still uses parameterized queries internally.
-  const query = pgprep(`SELECT * FROM posts
+  const dbQuery = pgprep(
+                `${withAuthor ?
+                'SELECT p.*, u.username AS author_username, u.email AS author_email FROM posts p JOIN users u ON p.user_id = u.id' :
+                'SELECT * FROM posts'}
                 ${slug ? 'WHERE LOWER(slug) LIKE LOWER(${slug})' : ""} 
                 ${title ? 'WHERE LOWER(title) LIKE LOWER(${title})' : ""} 
                 ${after ? 'AND id > ${after}' : ""} 
                 ${limit ? 'LIMIT ${limit}' : ""} 
                 ORDER BY updated_at DESC` //TODO: add sorting options
                 );
-  const values = {
+  const dbValues = {
     slug: slug ? `%${slug}%` : null, // Surround with % to allow partial matches.
     title: title ? `%${title}%` : null,
     after,
@@ -321,7 +325,7 @@ export async function getPosts({slug, title, after, limit}={}) {
   try {
     await client.connect();
     
-    const result = await client.query(query(values));
+    const result = await client.query(dbQuery(dbValues));
 
     if (result.rows.length > 0) return result.rows;
     else return [];
@@ -345,7 +349,7 @@ export async function getPostBySlug(slug) {
 
   try {
     await client.connect();
-    const query = "SELECT * FROM posts WHERE slug = $1 LIMIT 1";
+    const query = "SELECT p.*, u.username AS author_username, u.email AS author_email FROM posts p JOIN users u ON p.user_id = u.id WHERE slug = $1 LIMIT 1";
     const result = await client.query(query, [slug]);
 
     if (result.rows.length > 0) return result.rows[0];

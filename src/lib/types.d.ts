@@ -7,6 +7,10 @@ export type Post = {
   user_id: number;
   created_at: string;
   updated_at: string;
+  /* When JOINed with author info: */
+  author_username?: string;
+  author_email?: string;
+  author_avatar?: string;
 };
 
 export type Comment = {

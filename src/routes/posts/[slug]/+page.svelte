@@ -27,12 +27,15 @@
     <span class="author flex gap-1">
       <div class="avatar placeholder">
         <div class="bg-neutral-focus text-neutral-content rounded-full w-12">
-          <span>AU</span>
+          {#if data.post.author_avatar}
+            <img src={data.post.author_avatar} alt={data.post.author_username} />
+          {:else}
+            <span>{data.post.author_username?.slice(0,2).toUpperCase()}</span>
+          {/if}
         </div>
       </div>
       <p>
-        <!--TODO: add author name and image-->
-        <b>Author Name</b><br />
+        <b>{data.post.author_username}</b><br />
         <small
           >Posted on: {new Date(data.post.created_at).toLocaleString()}</small
         >

@@ -3,8 +3,8 @@ import * as DB from "$lib/server/db.js";
 import * as Utils from "$lib/server/utils.js";
 
 /**
- * @typedef {import('./$types').Post} Post
- * @typedef {import('./$types').User} User
+ * @typedef {import('$lib/types').Post} Post
+ * @typedef {import('$lib/types').User} User
  */
 
 /**
