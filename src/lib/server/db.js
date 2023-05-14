@@ -89,6 +89,66 @@ export async function deleteUser(identifier) {
   }
 }
 
+/**
+ * Modifies a user's username, email, and password-hash in the users table based on their user ID.
+ *
+ * @param {number} userId The ID of the user to be modified.
+ * @param {string} [username] The new username for the user. [Optional]
+ * @param {string} [email] The new email for the user. [Optional]
+ * @param {string} [passwordHash] The new password for the user. [Optional]
+ * @returns {Promise<boolean>} True if the modification was successful, false otherwise.
+ */
+export async function modifyUser(userId, username, email, passwordHash) {
+  const client = new PG.Client({ connectionString });
+
+  try {
+    await client.connect();
+
+    // Check for provided fields, if nothing provided skip adding to query.
+    const fieldsToUpdate = [];
+    const values = [userId];
+    let i = 2;
+
+    if (username) {
+      fieldsToUpdate.push(`username = $${i}`);
+      values.push(username);
+      i++;
+    }
+
+    if (email) {
+      fieldsToUpdate.push(`email = $${i}`);
+      values.push(email);
+      i++;
+    }
+
+    if (passwordHash) {
+      fieldsToUpdate.push(`password_hash = $${i}`);
+      values.push(passwordHash);
+    }
+
+    // No fields to update
+    if (fieldsToUpdate.length === 0) {
+      return false;
+    }
+
+    // Build the finalised query
+    const query = `
+      UPDATE users
+      SET ${fieldsToUpdate.join(", ")}
+      WHERE id = $1
+    `;
+
+    // Push new values
+    await client.query(query, values);
+    return true;
+
+  } catch (error) {
+    console.error("Error modifying user:", error);
+    return false;
+  } finally {
+    await client.end();
+  }
+}
 
 /**
  * Verifies if the given username and password match a user in the users table.
@@ -234,7 +294,6 @@ export async function getUserFromSession(sessionId) {
   }
 }
 
-
 /**
  * Retrieves a user by their email address from the users table.
  *
@@ -288,7 +347,6 @@ export async function getUserByUsername(username) {
     await client.end();
   }
 }
-
 
 /**
  * Inserts a new post into the posts table with the given title, content, slug, and user_id.
@@ -372,10 +430,9 @@ export async function updatePost(title, content, slug, user_id) {
   }
 }
 
-
 /**
  * Retrieves an array containing posts which match any of the conditions given in the options object.
- * 
+ *
  * @param {Object} [options] An object containing any of the following properties:
  * @param {string} [options.slug] A string to match against the slug column - will return all posts with a slug that contains this string.
  * @param {number} [options.after] The ID of the post to retrieve posts after.
@@ -413,7 +470,7 @@ export async function getPosts({slug, title, after, limit, withAuthor=false}={})
   const client = new PG.Client({ connectionString });
   try {
     await client.connect();
-    
+
     const result = await client.query(dbQuery(dbValues));
 
     if (result.rows.length > 0) return result.rows;
@@ -443,7 +500,7 @@ export async function getPostBySlug(slug) {
 
     if (result.rows.length > 0) return result.rows[0];
     else throw new Error(`No post found for slug "${slug}"`);
-    
+
   } catch (error) {
     throw new Error(`Error fetching post for slug "${slug}": ${error}`);
   } finally {
@@ -474,7 +531,7 @@ export async function testConnection() {
 
 /**
  * Get user comments for the specified post ID
- * 
+ *
  * @param {number} postId The post ID to get comments for
  * @returns {Promise<Array<Comment>>} An array of comment objects, if any match the criteria.
  */
@@ -498,12 +555,12 @@ export async function getCommentsForPostId(postId) {
 
 /**
  * Gets various interesting statistics about the blog for display on the frontend.
- * 
+ *
  * @returns {Promise<{users: number, posts: number, comments: number}>} An object containing the number of users, posts, and comments in the database.
  */
 export async function getStats() {
   const client = new PG.Client({ connectionString });
-  
+
   try {
     await client.connect();
     const query = `SELECT
@@ -515,7 +572,7 @@ export async function getStats() {
     if (result.rows.length <= 0) throw new Error("No stats found.");
 
     return result.rows[0];
-  
+
   } catch (error) {
     throw new Error(`Error fetching stats from DB: ${error}`);
   } finally {
