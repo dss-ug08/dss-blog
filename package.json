@@ -33,6 +33,7 @@
     "@types/marked": "^4.3.0",
     "bcrypt": "^5.1.0",
     "dompurify": "^3.0.3",
+    "easymde": "^2.18.0",
     "jsdom": "^22.0.0",
     "marked": "^5.0.1",
     "pg": "^8.10.0",

@@ -11,6 +11,7 @@ export type Post = {
   author_username?: string;
   author_email?: string;
   author_avatar?: string;
+  author_is_admin?: boolean;
 };
 
 export type Comment = {

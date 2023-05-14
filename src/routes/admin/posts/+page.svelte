@@ -35,25 +35,24 @@
             <td>
               {post.title}
               <br/>
-              <!--FIXME: DANGER possible xss, need to sanitize-->
-              <span class="text-xs">{@html post.content.substring(0, 55) + "&hellip;"}</span>
+              <span class="text-xs">{post.excerpt}</span>
             </td>
             <td>
               <div class="flex items-center space-x-3">
                 <div class="avatar">
-                  <div class="mask mask-squircle w-12 h-12">
-                    <img src={data.authors[0].avatarurl} alt={data.authors[0].username} />
+                  <div class="mask mask-circle w-12 h-12">
+                    <img src={post.author_avatar} alt={post.author_username} />
                   </div>
                 </div>
                 <div>
-                  <div class="font-bold">{data.authors[0].username}</div>
-                  <div class="text-sm opacity-50">{data.authors[0].is_admin ? 'Admin' : 'User'}</div>
+                  <div class="font-bold">{post.author_username}</div>
+                  <div class="text-sm opacity-50">{post?.author_is_admin ? 'Admin' : 'User'}</div>
                 </div>
               </div>
             </td>
             <td>{new Date(post.updated_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "medium", hour12: true })}</td>
             <th>
-              <button class="btn btn-primary btn-xs">Edit</button>
+              <a class="btn btn-primary btn-xs" href="/admin/posts/{post.slug}">Edit</a>
               <button class="btn btn-error btn-xs">Delete</button>
             </th>
           </tr>

@@ -8,13 +8,24 @@ import * as Utils from "$lib/server/utils.js";
  */
 
 /**
- * Load posts and users from the database for the admin posts page.
+ * Load posts and authors from the database for the admin posts page.
  *
- * @returns {Promise<{posts: ArrayLike<Post>, authors: ArrayLike<User>}>} An array of posts and users.
+ * @returns {Promise<{posts: ArrayLike<Post>}>} An array of posts and their authors.
  * @type {import('../$types').PageServerLoad}
  */
 export async function load({ params }) {
+  const posts = await DB.getPosts({ withAuthor: true });
+
+  for (let post of posts) {
+    post.title = Utils.truncateTitle(post.title);
+    post.excerpt = Utils.truncateExcerpt(Utils.mdToPlaintext(post.content), { limit: 100, byWords: false });
+    //TODO: this isn't great, can we clean this up?
+    post.author_avatar = Utils.gravatar(post.author_email);
+  }
+
   return {
+    posts,
+    /*
     posts: [
       {
         id: 1,
@@ -34,6 +45,6 @@ export async function load({ params }) {
         avatarurl: "https://daisyui.com/tailwind-css-component-profile-2@56w.png",
         is_admin: true,
       }
-    ]
+    ]*/
   };
 }

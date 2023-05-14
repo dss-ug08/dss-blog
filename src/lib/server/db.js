@@ -2,9 +2,9 @@
 import PG from "pg";
 import pgprep from "pg-prepared";
 import crypto from "crypto";
-import { verifyPassword } from "$lib/server/auth.js";
 import dotenv from "dotenv";
-import { hashPassword } from "$lib/server/auth.js";
+import * as Utils from "$lib/server/utils.js";
+import { verifyPassword } from "$lib/server/auth.js";
 
 /**
  * @typedef { import("$lib/types").Post } Post
@@ -306,7 +306,7 @@ export async function getPosts({slug, title, after, limit, withAuthor=false}={})
   // add conditions dynamically. This is still safe because pgprep still uses parameterized queries internally.
   const dbQuery = pgprep(
                 `${withAuthor ?
-                'SELECT p.*, u.username AS author_username, u.email AS author_email FROM posts p JOIN users u ON p.user_id = u.id' :
+                'SELECT p.*, u.username AS author_username, u.email AS author_email, u.is_admin AS author_is_admin FROM posts p JOIN users u ON p.user_id = u.id' :
                 'SELECT * FROM posts'}
                 ${slug ? 'WHERE LOWER(slug) LIKE LOWER(${slug})' : ""} 
                 ${title ? 'WHERE LOWER(title) LIKE LOWER(${title})' : ""} 
@@ -349,7 +349,7 @@ export async function getPostBySlug(slug) {
 
   try {
     await client.connect();
-    const query = "SELECT p.*, u.username AS author_username, u.email AS author_email FROM posts p JOIN users u ON p.user_id = u.id WHERE slug = $1 LIMIT 1";
+    const query = "SELECT p.*, u.username AS author_username, u.email AS author_email, u.is_admin AS author_is_admin FROM posts p JOIN users u ON p.user_id = u.id WHERE slug = $1 LIMIT 1";
     const result = await client.query(query, [slug]);
 
     if (result.rows.length > 0) return result.rows[0];

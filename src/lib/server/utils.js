@@ -30,12 +30,16 @@ export function truncateTitle(title) {
  * Truncates a post's content to the specified length, adding an ellipsis if necessary.
  * 
  * @param {string} content The content of the post to truncate.
+ * @param {Object} [options] The options to use when truncating the content.
+ * @param {number} [options.limit] The maximum length of the excerpt.
+ * @param {boolean} [options.byWords] Whether to truncate by words instead of characters.
  * @returns {string} The truncated content.
  */
-export function truncateExcerpt(content) {
+export function truncateExcerpt(content, { limit = maxExcerptLength, byWords = false }={}) {
   // TODO: this should probably still cap to a certain character length
-  //return content.length > maxExcerptLength ? content.substring(0, maxExcerptLength) + '…' : content;
-  return truncateStringToWordCount(content, maxExcerptLength);
+  if (byWords) return truncateStringToWordCount(content, limit);
+
+  return content.length > limit ? content.substring(0, limit) + '…' : content;
 }
 
 /**

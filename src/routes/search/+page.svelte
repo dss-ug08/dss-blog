@@ -14,7 +14,7 @@
 
 <Meta title="Search" />
 
-<main class="container py-5">
+<main class="container sm m-auto py-5">
   <h2 class="text-4xl mb-5">Search</h2>
   <form method="POST" class="form-control w-full max-w-xs">
     <input name="query" type="text" placeholder={"Search..."}

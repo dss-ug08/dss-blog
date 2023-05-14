@@ -29,7 +29,8 @@ export async function load({ params }) {
   for (let post of posts) {
     // If post content is greater than max, truncate and add ellipsis, otherwise return untouched.
     post.excerpt = Utils.truncateExcerpt(
-      Utils.mdToPlaintext(post.content)
+      Utils.mdToPlaintext(post.content),
+      { byWords: true }
     );
   }
 

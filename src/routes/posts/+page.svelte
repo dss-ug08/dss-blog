@@ -14,7 +14,7 @@
 
 <Meta title="All Posts"/>
 
-<main class="container">
+<main class="container sm m-auto">
 
     <h2 class="text-4xl">All Posts</h2>
     {#if (!Array.isArray(data.posts) || !data.posts.length)}
