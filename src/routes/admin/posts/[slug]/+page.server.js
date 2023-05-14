@@ -1,8 +1,6 @@
-import { error } from "@sveltejs/kit";
-import { marked } from "marked";
+import { error, fail } from "@sveltejs/kit";
 import * as Utils from "$lib/server/utils.js";
 import * as DB from "$lib/server/db.js";
-import { createPost, deletePostBySlug, updatePost } from "$lib/server/db.js";
 
 /**
  * @typedef { import("$lib/types").Post } Post
@@ -43,22 +41,18 @@ export const actions = {
       title: data.get("title"),
       content: data.get("content"),
       slug: data.get("slug"),
-      updated_at: new Date().toISOString(),
+      user_id: data.get("user_id"),
     };
 
-    const user_id = null // TODO: Add the userID here
-
     // Write post to database
-    // To delete posts, use deletePostBySlug, and pass in the parameter
-    const createdPost = await createPost(post.title, post.content, post.slug, user_id , post.updated_at);
+    const updatedPost = await DB.updatePost(post.title, post.content, post.slug, post.user_id);
 
-    // TODO: Return information based on success or failure
-    const success = true;
-    const message = "Post updated successfully.";
+    if (!updatedPost) return fail(500, {success: false, message: "Post could not be updated."});
 
     return {
-      success,
-      message
+      success: true,
+      message: "Post updated successfully.",
+      updatedPost,
     };
   }
 };

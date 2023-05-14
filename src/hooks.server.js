@@ -1,3 +1,5 @@
+import * as DB from "$lib/server/db.js";
+
 const securityHeaders = {
   //'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload', // Disabled for development
   'Content-Security-Policy': "default-src 'self' 'unsafe-inline'; img-src * 'self' data:",  // Don't load content from other hosts (XSS protection)
@@ -9,8 +11,21 @@ const securityHeaders = {
 };
 
 export async function handle({ event, resolve }) {
+  // Destroy session if user IP changes unexpectedly
+  const clientAddress = event.getClientAddress();
+  const sessionid = event.cookies.get("sessionid");
+  if (sessionid) {
+    const valid = await DB.checkSessionWithIP(sessionid, clientAddress);
+    if (!valid) {
+      event.cookies.delete("sessionid", { path: "/" });
+      DB.destroySession(sessionid);
+    }
+  }
+
+  // Generate response
   const response = await resolve(event);
 
+  // Apply security headers
   Object.entries(securityHeaders).forEach(([header, value]) => response.headers.set(header, value));
 
   return response;

@@ -40,7 +40,7 @@
   <h1 class="text-4xl mb-5">Edit Post: {data.post.slug}</h1>
 
   {#if form?.message}
-    <div class={form?.success ? 'text-success' : 'text-error'}>{form?.message}</div>
+    <div class={form?.success ? 'text-success' : 'text-error'}>{form?.message}{@html form?.success ? ` <a href="/posts/${form?.updatedPost?.slug}">View Post &rarr;</a>` : ''}</div>
   {/if}
 
   <form method="POST">
@@ -50,6 +50,10 @@
       </label>
       <input id="title" name="title" type="text" required class="input input-bordered w-full" value={data.post.title} />
     </div>
+    <!--TODO: Author picker?-->
+    <input type="hidden" id="user_id" name="user_id" value={data.post.user_id} />
+    <input type="hidden" id="slug" name="slug" value={data.post.slug} />
+    <!--/-->
     <div class="form-control w-full">
       <label class="label" for="content">
         <span class="label-text">Content</span>
