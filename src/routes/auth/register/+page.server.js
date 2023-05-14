@@ -17,7 +17,7 @@ export async function load({ cookies }) {
   if (!user) return null;
 
   // If the user is already logged in, redirect them to the home page
-  throw redirect(307, '/');
+  throw redirect(302, '/');
 }
 
 /**
