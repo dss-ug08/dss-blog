@@ -54,6 +54,41 @@ export async function insertUser(username, email, passwordHash) {
   }
 }
 
+/**
+ * Deletes a user from the users table based on their username or ID.
+ *
+ * @param {string | number} identifier The username or ID of the user to be deleted.
+ * @returns {Promise<boolean>} True if the deletion was successful, false otherwise.
+ */
+export async function deleteUser(identifier) {
+  const client = new PG.Client({ connectionString });
+
+  try {
+    await client.connect();
+
+    let query;
+    let values;
+
+    // Check if the identifier is a number (user ID) or string (username)
+    if (typeof identifier === "number") {
+      query = `DELETE FROM users WHERE id = $1`;
+      values = [identifier];
+    } else {
+      query = `DELETE FROM users WHERE username = $1`;
+      values = [identifier];
+    }
+
+    await client.query(query, values);
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return false;
+  } finally {
+    await client.end();
+  }
+}
+
 
 /**
  * Verifies if the given username and password match a user in the users table.
