@@ -1,6 +1,4 @@
 import * as DB from "$lib/server/db.js";
-import { verifyPassword } from "$lib/server/auth";
-import { getUserFromCookie } from "$lib/server/session";
 import { fail, json, redirect } from "@sveltejs/kit";
 
 /**
@@ -31,9 +29,6 @@ export async function load({ cookies }) {
 export const actions = {
   default: async ({ request, cookies }) => {
     //TODO: Return passed form data back to the user if there is an error
-
-    // Set a standard error message to avoid leaking specific error information
-    const standardErrorMessage = "Your account could not be created. Make sure your account doesn't already exist, and your details meet all of the requirements.";
 
     // Read data from the form submission
     const data = await request.formData();
