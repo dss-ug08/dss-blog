@@ -160,8 +160,6 @@ export async function modifyUser(userId, username, email, passwordHash) {
 export async function verifyUserCredentials(username, password) {
   const client = new PG.Client({ connectionString });
 
-  console.log(username, password);
-
   try {
     await client.connect();
     const query = `
@@ -173,14 +171,10 @@ export async function verifyUserCredentials(username, password) {
     const values = [username];
     const result = await client.query(query, values);
 
-    console.log("Query result:", result);
-
     if (result.rowCount > 0) {
       const user = result.rows[0];
-      console.log("User found:", user);
 
       const passwordMatches = await verifyPassword(password, user.password_hash);
-      console.log("Password matches:", passwordMatches);
 
       if (passwordMatches) {
 
@@ -200,22 +194,30 @@ export async function verifyUserCredentials(username, password) {
 }
 
 /**
- * Creates a new session for the given user in the sessions table.
+ * Creates a new session for the given user in the sessions table and records
+ * the associated IP address in the session_ips table.
  *
  * @param {string} user The user ID to create the session for.
+ * @param {string} userIp The IP address of the user to be associated with the session.
  * @returns {Promise<string>} The session ID of the created session.
- * @throws {Error} If an error occurs while creating the session.
+ * @throws {Error} If an error occurs while creating the session or recording the IP address.
  */
-export async function createSession(user) {
+export async function createSession(user, userIp) {
   const client = new PG.Client({ connectionString });
 
   try {
     await client.connect();
     const sessionId = generateSessionId();
     const expiresAt = calculateSessionExpiration();
+
+    // Create a new session in the sessions table
     const query = `INSERT INTO sessions (session_id, user_id, expires_at) VALUES ($1, $2, $3)`;
     const values = [sessionId, user, expiresAt];
     await client.query(query, values);
+
+    // Record the IP address associated with this session
+    const ipQuery = `INSERT INTO session_ips (session_id, ip_address) VALUES ($1, $2)`;
+    await client.query(ipQuery, [sessionId, userIp]);
 
     return sessionId;
   } catch (error) {
