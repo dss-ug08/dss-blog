@@ -462,6 +462,65 @@ export async function updatePost(title, content, slug, user_id) {
 }
 
 /**
+ * Toggles the hidden status of a post.
+ *
+ * @param {string} slug The slug of the post.
+ * @param {boolean} isHidden The new hidden status.
+ * @returns {Promise<Post | null>} The updated post object if successful, or null if an error occurs.
+ */
+export async function toggleHidden(slug, isHidden) {
+  const client = new PG.Client({ connectionString });
+
+  try {
+    await client.connect();
+    const query = `
+      UPDATE posts 
+      SET isHidden = $2 
+      WHERE slug = $1 
+      RETURNING *;
+    `;
+    const values = [slug, isHidden];
+    const result = await client.query(query, values);
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error toggling hidden status:", error);
+    return null;
+  } finally {
+    await client.end();
+  }
+}
+
+/**
+ * Toggles the draft status of a post.
+ *
+ * @param {string} slug The slug of the post.
+ * @param {boolean} isDraft The new draft status.
+ * @returns {Promise<Post | null>} The updated post object if successful, or null if an error occurs.
+ */
+export async function toggleDraft(slug, isDraft) {
+  const client = new PG.Client({ connectionString });
+
+  try {
+    await client.connect();
+    const query = `
+      UPDATE posts 
+      SET isDraft = $2 
+      WHERE slug = $1 
+      RETURNING *;
+    `;
+    const values = [slug, isDraft];
+    const result = await client.query(query, values);
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error toggling draft status:", error);
+    return null;
+  } finally {
+    await client.end();
+  }
+}
+
+
+/**
  * Retrieves an array containing posts which match any of the conditions given in the options object.
  *
  * @param {Object} [options] An object containing any of the following properties:
