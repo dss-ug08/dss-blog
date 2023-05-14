@@ -264,16 +264,16 @@ export async function getUserByUsername(username) {
  * @param {number} user_id The ID of the user who created the post.
  * @returns {Promise<Post | null>} The inserted post object if successful, or null if an error occurs.
  */
-export async function createPost(title, content, slug, user_id) {
+export async function createPost(title, content, slug, user_id, updated_at) {
   const client = new PG.Client({ connectionString });
 
   try {
     await client.connect();
     const query = `
-      INSERT INTO posts (title, content, slug, user_id)
-      VALUES ($1, $2, $3, $4) RETURNING *;
+      INSERT INTO posts (title, content, slug, user_id, updated_at)
+      VALUES ($1, $2, $3, $4, $5) RETURNING *;
     `;
-    const values = [title, content, slug, user_id];
+    const values = [title, content, slug, user_id, updated_at];
     const result = await client.query(query, values);
     return result.rows[0];
   } catch (error) {
@@ -283,6 +283,7 @@ export async function createPost(title, content, slug, user_id) {
     await client.end();
   }
 }
+
 
 /**
  * Retrieves an array containing posts which match any of the conditions given in the options object.
@@ -336,6 +337,28 @@ export async function getPosts({slug, title, after, limit, withAuthor=false}={})
   }
 
   return []; // This should be impossible.
+}
+
+/**
+ * Deletes a post from the posts table based on the given slug.
+ *
+ * @param {string} slug The unique slug of the post to be deleted.
+ * @returns {Promise<void>}
+ * @throws {Error} If an error occurs while deleting the post.
+ */
+export async function deletePostBySlug(slug) {
+  const client = new PG.Client({ connectionString });
+
+  try {
+    await client.connect();
+    const query = 'DELETE FROM posts WHERE slug = $1';
+    await client.query(query, [slug]);
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    throw error;
+  } finally {
+    await client.end();
+  }
 }
 
 /**

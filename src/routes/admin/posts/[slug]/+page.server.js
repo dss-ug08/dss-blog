@@ -2,6 +2,7 @@ import { error } from "@sveltejs/kit";
 import { marked } from "marked";
 import * as Utils from "$lib/server/utils.js";
 import * as DB from "$lib/server/db.js";
+import { createPost, deletePostBySlug } from "$lib/server/db.js";
 
 /**
  * @typedef { import("$lib/types").Post } Post
@@ -36,6 +37,7 @@ export async function load({ params }) {
 export const actions = {
   default: async ({ request }) => {
     const data = await request.formData();
+
     /** @type {Post} */
     const post = {
       title: data.get("title"),
@@ -44,7 +46,11 @@ export const actions = {
       updated_at: new Date().toISOString(),
     };
 
-    // TODO: Write post to database
+    const user_id = null // TODO: Add the userID here
+
+    // Write post to database
+    // To delete posts, use deletePostBySlug, and pass in the parameter
+    const createdPost = await createPost(post.title, post.content, post.slug, user_id , post.updated_at);
 
     // TODO: Return information based on success or failure
     const success = true;
@@ -56,3 +62,4 @@ export const actions = {
     };
   }
 };
+
