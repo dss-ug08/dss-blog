@@ -54,6 +54,41 @@ export async function insertUser(username, email, passwordHash) {
   }
 }
 
+/**
+ * Deletes a user from the users table based on their username or ID.
+ *
+ * @param {string | number} identifier The username or ID of the user to be deleted.
+ * @returns {Promise<boolean>} True if the deletion was successful, false otherwise.
+ */
+export async function deleteUser(identifier) {
+  const client = new PG.Client({ connectionString });
+
+  try {
+    await client.connect();
+
+    let query;
+    let values;
+
+    // Check if the identifier is a number (user ID) or string (username)
+    if (typeof identifier === "number") {
+      query = `DELETE FROM users WHERE id = $1`;
+      values = [identifier];
+    } else {
+      query = `DELETE FROM users WHERE username = $1`;
+      values = [identifier];
+    }
+
+    await client.query(query, values);
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return false;
+  } finally {
+    await client.end();
+  }
+}
+
 
 /**
  * Verifies if the given username and password match a user in the users table.
@@ -264,16 +299,16 @@ export async function getUserByUsername(username) {
  * @param {number} user_id The ID of the user who created the post.
  * @returns {Promise<Post | null>} The inserted post object if successful, or null if an error occurs.
  */
-export async function createPost(title, content, slug, user_id) {
+export async function createPost(title, content, slug, user_id, updated_at) {
   const client = new PG.Client({ connectionString });
 
   try {
     await client.connect();
     const query = `
-      INSERT INTO posts (title, content, slug, user_id)
-      VALUES ($1, $2, $3, $4) RETURNING *;
+      INSERT INTO posts (title, content, slug, user_id, updated_at)
+      VALUES ($1, $2, $3, $4, $5) RETURNING *;
     `;
-    const values = [title, content, slug, user_id];
+    const values = [title, content, slug, user_id, updated_at];
     const result = await client.query(query, values);
     return result.rows[0];
   } catch (error) {
@@ -283,6 +318,60 @@ export async function createPost(title, content, slug, user_id) {
     await client.end();
   }
 }
+
+/**
+ * Deletes a post from the posts table based on the given slug.
+ *
+ * @param {string} slug The unique slug of the post to be deleted.
+ * @returns {Promise<void>}
+ * @throws {Error} If an error occurs while deleting the post.
+ */
+export async function deletePostBySlug(slug) {
+  const client = new PG.Client({ connectionString });
+
+  try {
+    await client.connect();
+    const query = 'DELETE FROM posts WHERE slug = $1';
+    await client.query(query, [slug]);
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    throw error;
+  } finally {
+    await client.end();
+  }
+}
+
+/**
+ * Updates an existing post in the posts table.
+ *
+ * @param {string} title The new title of the post.
+ * @param {string} content The new content of the post.
+ * @param {string} slug The slug of the post to be updated.
+ * @param {number} user_id The ID of the user who updated the post.
+ * @returns {Promise<Post | null>} The updated post object if successful, or null if an error occurs.
+ */
+export async function updatePost(title, content, slug, user_id) {
+  const client = new PG.Client({ connectionString });
+
+  try {
+    await client.connect();
+    const query = `
+      UPDATE posts 
+      SET title = $1, content = $2, user_id = $4, updated_at = CURRENT_TIMESTAMP
+      WHERE slug = $3
+      RETURNING *;
+    `;
+    const values = [title, content, slug, user_id];
+    const result = await client.query(query, values);
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error updating post:", error);
+    return null;
+  } finally {
+    await client.end();
+  }
+}
+
 
 /**
  * Retrieves an array containing posts which match any of the conditions given in the options object.
