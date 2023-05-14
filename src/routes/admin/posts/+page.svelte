@@ -2,6 +2,23 @@
   import Meta from "$lib/components/Meta.svelte";
 
   export let data;
+
+  function deletePost(slug) {
+    const confirmed = confirm("Are you sure you want to delete this post?");
+    if (confirmed) {
+      fetch(`/admin/posts/${slug}`, {
+        method: "DELETE",
+      })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.success) {
+          window.location.reload();
+        } else {
+          alert(res.message);
+        }
+      });
+    }
+  }
 </script>
 
 <Meta title="Post Management" />
@@ -33,7 +50,9 @@
               </label>
             </th>
             <td>
-              {post.title}
+              <a href="/posts/{post.slug}">
+                {post.title}
+              </a>
               <br/>
               <span class="text-xs">{post.excerpt}</span>
             </td>
@@ -53,7 +72,7 @@
             <td>{new Date(post.updated_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "medium", hour12: true })}</td>
             <th>
               <a class="btn btn-primary btn-xs" href="/admin/posts/{post.slug}">Edit</a>
-              <button class="btn btn-error btn-xs">Delete</button>
+              <button class="btn btn-error btn-xs" on:click={() => deletePost(post.slug)}>Delete</button>
             </th>
           </tr>
         {/each}
