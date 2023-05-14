@@ -150,7 +150,6 @@ export async function modifyUser(userId, username, email, passwordHash) {
   }
 }
 
-
 /**
  * Verifies if the given username and password match a user in the users table.
  *
@@ -295,7 +294,6 @@ export async function getUserFromSession(sessionId) {
   }
 }
 
-
 /**
  * Retrieves a user by their email address from the users table.
  *
@@ -349,7 +347,6 @@ export async function getUserByUsername(username) {
     await client.end();
   }
 }
-
 
 /**
  * Inserts a new post into the posts table with the given title, content, slug, and user_id.
@@ -432,7 +429,6 @@ export async function updatePost(title, content, slug, user_id) {
     await client.end();
   }
 }
-
 
 /**
  * Retrieves an array containing posts which match any of the conditions given in the options object.
