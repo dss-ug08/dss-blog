@@ -16,7 +16,7 @@ export async function load({ cookies }) {
   if (!user) return null;
 
   // If the user is already logged in, redirect them to the home page
-  throw redirect(307, '/');
+  throw redirect(302, '/');
 }
 
 /**
@@ -56,7 +56,6 @@ export const actions = {
     cookies.set("sessionid", sessionId, { path: "/", httpOnly: true, sameSite: 'strict', secure: isSecure, maxAge: 60 * 60 * 24 * 30 });
 
     return json({ success: true, message: "Login successful." });
-
   }
 };
 
