@@ -2,7 +2,7 @@ import { error } from "@sveltejs/kit";
 import { marked } from "marked";
 import * as Utils from "$lib/server/utils.js";
 import * as DB from "$lib/server/db.js";
-import { createPost, deletePostBySlug } from "$lib/server/db.js";
+import { createPost, deletePostBySlug, updatePost } from "$lib/server/db.js";
 
 /**
  * @typedef { import("$lib/types").Post } Post
