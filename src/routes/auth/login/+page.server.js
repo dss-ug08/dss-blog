@@ -51,7 +51,7 @@ export const actions = {
     if (!user) return fail(401, { success: false, message: "Invalid username or password." });
 
     // If the credentials are valid, create a session and return the session ID as a cookie
-    const sessionId = await DB.createSession(user.id);
+    const sessionId = await DB.createSession(user.id, clientAddress);
     const isSecure = request.headers.get("x-forwarded-proto") === "https";
     cookies.set("sessionid", sessionId, { path: "/", httpOnly: true, sameSite: 'strict', secure: isSecure, maxAge: 60 * 60 * 24 * 30 });
 
