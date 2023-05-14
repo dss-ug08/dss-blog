@@ -65,8 +65,6 @@ export async function insertUser(username, email, passwordHash) {
 export async function verifyUserCredentials(username, password) {
   const client = new PG.Client({ connectionString });
 
-  console.log(username, password);
-
   try {
     await client.connect();
     const query = `
@@ -112,9 +110,6 @@ export async function verifyUserCredentials(username, password) {
 export async function createSession(user, userIp) {
   const client = new PG.Client({ connectionString });
 
-  // TODO: DEBUG message
-  console.log(user, userIp)
-
   try {
     await client.connect();
     const sessionId = generateSessionId();
@@ -128,7 +123,6 @@ export async function createSession(user, userIp) {
     // Record the IP address associated with this session
     // const ipQuery = `INSERT INTO session_ips (session_id, ip_address) VALUES ($1, $2)`;
     // await client.query(ipQuery, [sessionId, userIp]);
-
 
     return sessionId;
   } catch (error) {

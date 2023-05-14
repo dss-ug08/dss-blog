@@ -5,12 +5,11 @@ import { getUserFromSession } from "$lib/server/db.js";
 export async function GET({ url, cookies }) {
 
   const sessionId = cookies.get("sessionid");
+  console.log(sessionId);
   if (!sessionId) throw error(401, "Unauthorized");
 
   const user = await getUserFromSession(sessionId);
   if (!user.id) throw error(401, "Unauthorized");
-
-
 
   return json({
     user: {

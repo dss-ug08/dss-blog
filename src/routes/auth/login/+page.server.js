@@ -8,6 +8,12 @@ import {
 import { verifyPassword } from "$lib/server/auth";
 import { getUserFromCookie } from "$lib/server/session";
 
+
+// Temp
+
+import * as api from "$lib/api.js";
+import { fail, json, redirect } from "@sveltejs/kit";
+
 /**
  * If a user already has a session cookie, we should return their user object and
  * redirect them to the homepage.
@@ -16,10 +22,8 @@ import { getUserFromCookie } from "$lib/server/session";
  * @returns {Promise<Object | null>} A user object, or null if not logged in.
  * @type {import("./$types").PageServerLoad}
  */
-export async function load({ cookies }) {
-  const sessionId = cookies.get("sessionid");
-  const user = await getUserFromSession(sessionId);
-  return { user };
+export async function load({ locals }) {
+  if (locals.user) throw redirect(307, "/");
 }
 
 /**
@@ -30,48 +34,44 @@ export async function load({ cookies }) {
  * @type {import("./$types").Actions}
  */
 export const actions = {
-  default: async ({ request, cookies, locals }) => {
-    // Parse the incoming request body to get the submitted form data
-    const body = await request.arrayBuffer();
-    const decodedBody = new TextDecoder().decode(body);
-    const formData = querystring.parse(decodedBody);
-    const { username, password } = formData;
 
-    // Verify the submitted user credentials
-    const user = await verifyUserCredentials(username, password);
+  default: async ({ cookies, request, locals }) => {
 
-    // If the user credentials are invalid, return a 401 status with an error message
-    if (!user) {
-      return {
-        status: 401,
-        body: JSON.stringify({ message: "Invalid username or password" }),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      };
+    console.log("WEBPAGE >> Login action triggered");
+
+    const data = await request.formData();
+
+    console.log("Webpage: Attempting POST request to API");
+
+    const body = await api.post('auth/login', {
+
+      user: {
+        username: data.get('username'),
+        password: data.get('password')
+      }
+
+    });
+
+    console.log("WEBPAGE >> Response received from API")
+
+    console.log("Webpage: POST sent, API Response:\n", body);
+
+
+    if (body.errors) {
+      return new Response(401
+      );
     }
 
-    // If the credentials are valid, create a session and return the session ID as a cookie
 
-    const clientIP = locals.ip;
-    const sessionId = await createSession(user.id, clientIP); // Pass the client IP address here
+    const session_id = body.headers.get('session-id');
+    // API reply
+    console.log("Webpage: Authorised\n\tSession ID: ", session_id)
 
-
-    const secure = request.headers["x-forwarded-proto"] === "https";
-    cookies.set("sessionid", sessionId, { path: "/" });
-
-
-    return {
-      status: 200,
-      body: JSON.stringify({ message: "User logged in successfully" }),
-      headers: {
-        "Content-Type": "application/json",
-        "Set-Cookie": `sessionid=${sessionId}; Path=/; HttpOnly${secure ? "; Secure" : ""}`
-      }
-    };
+    load()
 
   }
-};
 
+
+};
 
 

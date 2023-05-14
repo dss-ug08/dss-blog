@@ -8,20 +8,7 @@ const securityHeaders = {
   //'X-Content-Type-Options': 'nosniff',              // Prevents browsers from trying to guess ("sniff") the MIME type of content //TODO: check if this breaks app
 };
 /** @type {import('@sveltejs/kit').Handle} */
-export async function handle({ request, event, resolve }) {
-
-
-  // User IP retrieval
-  const clientIp = event.headers;
-  console.log("IP: " + clientIp)
-
-  console.log("Request Obj Contents: " + request);
-
-  console.log("Event Contents: " + event);
-
-
-  // Add the IP to request.locals
-  // request.locals.ip = clientIp;
+export async function handle({ event, resolve }) {
 
 
   // Security Headers
