@@ -14,40 +14,6 @@
 
   /** @type {import('./$types').ActionData} */
   export let form;
-
-  if (data.user) {
-    // If the user is already logged in, redirect them to the home page
-    throw redirect(307, '/');
-  }
-
-  let errorMessage = "";
-  let successMessage = "";
-
-  async function handleSubmit(event) {
-    event.preventDefault();
-
-    const formData = new FormData(event.target);
-    const username = formData.get("username");
-    const email = formData.get("email");
-    const password = formData.get("password");
-
-    const response = await fetch("/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded" // Change the Content-Type here
-      },
-      body: new URLSearchParams({ username, email, password }) // Use URLSearchParams to format the data correctly
-    });
-
-    if (response.ok) {
-      successMessage = "User registered successfully";
-      throw redirect(307, "/login");
-    } else {
-      const resp = await response.json();
-      errorMessage = resp.error.message;
-    }
-  }
-
 </script>
 
 <Meta title="Register" />
@@ -55,12 +21,11 @@
 <main class="container m-auto flex flex-col items-center my-5">
   <h2 class="text-4xl mb-5">Register</h2>
   
-  {#if successMessage || errorMessage}
-    <p class="success">{successMessage}</p>
-    <p class="error">{errorMessage}</p>
+  {#if form?.message}
+    <div class={form?.success ? 'text-success' : 'text-error'}>{form?.message}</div>
   {/if}
 
-  <form on:submit|preventDefault="{handleSubmit}">
+  <form method="POST">
     <div class="form-control w-full max-w-xs">
       <label class="label" for="username">
         <span class="label-text">Username</span>
@@ -85,13 +50,4 @@
   </form>
 </main>
 
-<style>
-  .error {
-    color: red;
-    margin-bottom: 1rem;
-  }
-  .success {
-    color: green;
-    margin-bottom: 1rem;
-  }
-</style>
+<style></style>
