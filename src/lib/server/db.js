@@ -95,7 +95,7 @@ export async function deleteUser(identifier) {
  *
  * @param {string} username The username of the user to verify.
  * @param {string} password The plaintext password to check against the stored password hash.
- * @returns {Promise<Object | null>} The user object if the credentials are valid, or null if the credentials are invalid or an error occurs.
+ * @returns {Promise<User | null>} The user object if the credentials are valid, or null if the credentials are invalid or an error occurs.
  */
 export async function verifyUserCredentials(username, password) {
   const client = new PG.Client({ connectionString });
