@@ -27,8 +27,12 @@ export async function load({ cookies }) {
  * @type {import("./$types").Actions}
  */
 export const actions = {
-  default: async ({ request, cookies }) => {
+  default: async ({ request, cookies, getClientAddress }) => {
     //TODO: Return passed form data back to the user if there is an error
+
+    // Get client IP for rate limiting purposes
+    const clientAddress = getClientAddress();
+    console.warn(`Client IP: ${clientAddress}`);
 
     // Read data from the form submission
     const data = await request.formData();
