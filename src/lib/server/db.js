@@ -297,6 +297,35 @@ export async function getUserFromSession(sessionId) {
 }
 
 /**
+ * Checks if a session with a given IP exists in the session_ips table.
+ *
+ * @param {string} session_id The session ID to check.
+ * @param {string} user_ip The IP address to check.
+ * @returns {Promise<boolean>} True if a session with the given ID and IP exists, false otherwise.
+ */
+export async function checkSessionWithIP(session_id, user_ip) {
+  const client = new PG.Client({ connectionString });
+
+  try {
+    await client.connect();
+    const query = `
+      SELECT COUNT(*) as count
+      FROM session_ips
+      WHERE session_id = $1 AND ip_address = $2;
+    `;
+    const values = [session_id, user_ip];
+    const result = await client.query(query, values);
+
+    return result.rows[0].count > 0;
+  } catch (error) {
+    console.error("Error checking session with IP:", error);
+    throw error;
+  } finally {
+    await client.end();
+  }
+}
+
+/**
  * Retrieves a user by their email address from the users table.
  *
  * @param {string} email The email address of the user to look up.
