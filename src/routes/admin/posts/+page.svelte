@@ -70,6 +70,7 @@
       
     </table>
     <a href="/admin" class="btn btn-outline mt-5">Back</a>
+    <a href="/admin/posts/new/" class="btn btn-success mt-5">New</a>
   </div>
 </main>
 
