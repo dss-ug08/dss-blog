@@ -669,3 +669,94 @@ export async function getStats() {
     await client.end();
   }
 }
+
+// Sessions & 2FA
+
+/**
+ * Retrieves the 2FA secret for a user from the database.
+ *
+ * @param {number} userId - The ID of the user.
+ * @returns {Promise<string|null>} The user's 2FA secret if it exists, or null if it doesn't.
+ */
+export async function getUserSecretFromDatabase(userId) {
+  const client = new PG.Client({ connectionString });
+
+  try {
+    await client.connect();
+    const query = 'SELECT two_factor_secret FROM two_factor_auth WHERE user_id = $1;';
+    const values = [userId];
+    const result = await client.query(query, values);
+    return result.rows[0].two_factor_secret;
+  } catch (error) {
+    console.error("Error getting user's 2FA secret:", error);
+    return null;
+  } finally {
+    await client.end();
+  }
+}
+
+/**
+ * Saves a 2FA secret for a user in the database and enables 2FA for the user.
+ *
+ * @param {number} userId - The ID of the user.
+ * @param {string} secret - The 2FA secret to save.
+ * @returns {Promise<void>}
+ */
+export async function saveUserSecretInDatabase(userId, secret) {
+  const client = new PG.Client({ connectionString });
+
+  try {
+    await client.connect();
+    const query =
+      'INSERT INTO two_factor_auth(user_id, two_factor_secret, is_2fa_enabled) VALUES($1, $2, true) ON CONFLICT (user_id) DO UPDATE SET two_factor_secret = $2, is_2fa_enabled = true;';
+    const values = [userId, secret];
+    await client.query(query, values);
+  } catch (error) {
+    console.error("Error saving user's 2FA secret:", error);
+  } finally {
+    await client.end();
+  }
+}
+
+/**
+ * Removes a user's 2FA secret from the database and disables 2FA for the user.
+ *
+ * @param {number} userId - The ID of the user.
+ * @returns {Promise<void>}
+ */
+export async function removeUserSecretFromDatabase(userId) {
+  const client = new PG.Client({ connectionString });
+
+  try {
+    await client.connect();
+    const query = 'UPDATE two_factor_auth SET two_factor_secret = NULL, is_2fa_enabled = false WHERE user_id = $1;';
+    const values = [userId];
+    await client.query(query, values);
+  } catch (error) {
+    console.error("Error removing user's 2FA secret:", error);
+  } finally {
+    await client.end();
+  }
+}
+
+/**
+ * Enables or disables 2FA for a user.
+ *
+ * @param {number} userId - The ID of the user.
+ * @param {boolean} enabled - Whether to enable or disable 2FA.
+ * @returns {Promise<void>}
+ */
+export async function set2FAEnabledForUser(userId, enabled) {
+  const client = new PG.Client({ connectionString });
+
+  try {
+    await client.connect();
+    const query = 'UPDATE two_factor_auth SET is_2fa_enabled = $1 WHERE user_id = $2;';
+    const values = [enabled, userId];
+    await client.query(query, values);
+  } catch (error) {
+    console.error("Error setting user's 2FA status:", error);
+  } finally {
+    await client.end();
+  }
+}
