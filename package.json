@@ -37,6 +37,8 @@
     "jsdom": "^22.0.0",
     "marked": "^5.0.1",
     "pg": "^8.10.0",
-    "pg-prepared": "^2.5.13"
+    "pg-prepared": "^2.5.13",
+    "qrcode": "^1.5.3",
+    "speakeasy": "^2.0.0"
   }
 }
