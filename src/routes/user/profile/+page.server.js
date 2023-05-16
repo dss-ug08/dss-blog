@@ -31,7 +31,12 @@ export async function load({ params, cookies }) {
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-  username: async ({ request }) => {
+  username: async ({ request, cookies }) => {
+    // Get existing details
+    const sessionid = cookies.get("sessionid");
+    const user = await DB.getUserFromSession(sessionid);
+
+    // Get new details
     const data = await request.formData();
     const newUsername = data.get("username")?.toString();
     if (!newUsername) return fail(400, { success: false, message: "Username cannot be empty." });
@@ -39,11 +44,17 @@ export const actions = {
     const possiblyExistingUser = await DB.getUserByUsername(newUsername);
     if (possiblyExistingUser) return fail(400, { success: false, message: "Username invalid or already taken." });
 
-    // TODO: update username in db
+    await DB.modifyUser(user.id, newUsername, undefined, undefined);
+    //TODO: catch errors here
 
     return { success: true, message: "Username updated successfully." };
   },
-  email: async ({ request }) => {
+  email: async ({ request, cookies }) => {
+    // Get existing details
+    const sessionid = cookies.get("sessionid");
+    const user = await DB.getUserFromSession(sessionid);
+
+    // Get new details
     const data = await request.formData();
     const newEmail = data.get("email")?.toString();
     if (!newEmail) return fail(400, { success: false, message: "Email cannot be empty." });
@@ -53,7 +64,8 @@ export const actions = {
     const possiblyExistingEmail = await DB.getUserByEmail(newEmail);
     if (possiblyExistingEmail) return fail(400, { success: false, message: "Email invalid or already used." });
 
-    // TODO: update email in db
+    await DB.modifyUser(user.id, undefined, newEmail, undefined);
+    //TODO: catch errors here
 
     return { success: true, message: "Email updated successfully." };
   },

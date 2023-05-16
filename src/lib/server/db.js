@@ -132,6 +132,7 @@ export async function modifyUser(userId, username, email, passwordHash) {
     }
 
     // Build the finalised query
+    //FIXME: This is vulnerable to SQL injection, use pg-prepared
     const query = `
       UPDATE users
       SET ${fieldsToUpdate.join(", ")}
