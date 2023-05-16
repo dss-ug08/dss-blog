@@ -24,9 +24,9 @@
   <div class="postheader pb-5">
     <h1 class="text-5xl font-extrabold pb-5">{data.post.title}</h1>
 
-    <span class="author flex gap-1">
+    <span class="author flex gap-3">
       <div class="avatar placeholder">
-        <div class="bg-neutral-focus text-neutral-content rounded-full w-12">
+        <div class="bg-neutral-focus text-neutral-content w-12 rounded-full">
           {#if data.post.author_avatar}
             <img src={data.post.author_avatar} alt={data.post.author_username} />
           {:else}

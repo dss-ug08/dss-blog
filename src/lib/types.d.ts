@@ -29,4 +29,6 @@ export type User = {
   created_at: string;
   updated_at: string;
   is_admin: boolean;
+  /* Currently these properties are not in the DB, but are generated on the fly */
+  avatar?: string;
 };

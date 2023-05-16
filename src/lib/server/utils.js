@@ -180,3 +180,38 @@ export function gravatar(email) {
   const hash = crypto.createHash('md5').update(email.trim().toLowerCase()).digest('hex');
   return `https://www.gravatar.com/avatar/${hash}?d=retro`;
 }
+
+// Logging
+
+/**
+ * A class for handling debug logging.
+ */
+export class Debugger {
+  /**
+   * Create a new Debugger instance.
+   * 
+   * @param {string} caller - The name of the calling function/class/file.
+   */
+  constructor(caller) {
+    this.debugMode = process.env.NODE_ENV === 'development';
+    this.caller = caller;
+  }
+
+  /**
+   * Log a message to the console if debug mode is enabled.
+   * 
+   * @param {string} message - The message to log.
+   */
+  log(message) {
+    if (this.debugMode) console.log(`[${this.caller}] ${message}`);
+  }
+
+  /**
+   * Log an error message to the console if debug mode is enabled.
+   * 
+   * @param {string | Error} message - The error to log.
+   */
+  error(message) {
+    if (this.debugMode) console.error(`[${this.caller}] ${message}`);
+  }
+}

@@ -35,7 +35,7 @@
               <div class="flex items-center space-x-3">
                 <div class="avatar">
                   <div class="mask mask-squircle w-12 h-12">
-                    <img src={user.avatarurl} alt={user.username} />
+                    <img src={user.avatar} alt={user.username} />
                   </div>
                 </div>
                 <div>
@@ -46,8 +46,8 @@
             </td>
             <td>{new Date(user.updated_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "medium", hour12: true })}</td>
             <th>
-              <button class="btn btn-primary btn-xs">Edit</button>
-              <button class="btn btn-error btn-xs">Delete</button>
+              <button class="btn btn-primary btn-xs btn-disabled">Edit</button>
+              <button class="btn btn-error btn-xs btn-disabled">Delete</button>
             </th>
           </tr>
         {/each}

@@ -1,4 +1,7 @@
 import * as DB from "$lib/server/db.js";
+import * as Auth from "$lib/server/auth.js";
+import * as Utils from "$lib/server/utils.js";
+import * as Kit from "@sveltejs/kit";
 
 const securityHeaders = {
   //'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload', // Disabled for development
@@ -20,6 +23,19 @@ export async function handle({ event, resolve }) {
       event.cookies.delete("sessionid", { path: "/" });
       DB.destroySession(sessionid);
     }
+  }
+
+  // Auth checks
+  if (event.url.pathname.startsWith("/admin")) { 
+    const debug = new Utils.Debugger("hooks:handle");
+    // Auth check
+    try {
+      await Auth.checkPermissions(event.cookies.get('sessionid'), { admin: true});
+    } catch (err) {
+      debug.error(err);
+      throw Kit.redirect(302, '/auth/login');
+    }
+    // End auth check
   }
 
   // Generate response

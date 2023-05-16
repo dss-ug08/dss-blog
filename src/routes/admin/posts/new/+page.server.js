@@ -1,6 +1,7 @@
 import { error, fail } from "@sveltejs/kit";
 import * as Utils from "$lib/server/utils.js";
 import * as DB from "$lib/server/db.js";
+import * as Auth from "$lib/server/auth.js";
 
 /**
  * @typedef { import("$lib/types").Post } Post
@@ -16,10 +17,17 @@ import * as DB from "$lib/server/db.js";
  * @type {import('./$types').PageServerLoad}
  */
 export async function load({ params, cookies }) {
-  const sessionid = cookies.get('sessionid');
-  if (!sessionid) throw error(401, "Unauthorized");
-  const user = await DB.getUserFromSession(sessionid);
-  if (!user) throw error(401, "Unauthorized");
+  const debug = new Utils.Debugger("routes:admin:posts:new:load");
+  let user;
+
+  // Auth check
+  try {
+    user = await Auth.checkPermissions(cookies.get('sessionid'), { admin: true});
+  } catch (err) {
+    debug.error(err);
+    throw error(403, "Forbidden");
+  }
+  // End auth check
 
   return {
     user_id: user.id,

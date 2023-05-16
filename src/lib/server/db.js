@@ -297,6 +297,43 @@ export async function getUserFromSession(sessionId) {
 }
 
 /**
+ * Check if a given session has expired.
+ * 
+ * @param {string} sessionid - The session ID to check.
+ * @returns {Promise<boolean>} - True if the session has expired, false otherwise.
+ */
+export async function hasSessionExpired(sessionid) {
+  const client = new PG.Client({ connectionString });
+
+  try {
+    await client.connect();
+    const query = `
+      SELECT expires_at
+      FROM sessions
+      WHERE session_id = $1
+    `;
+    const values = [sessionid];
+    const result = await client.query(query, values);
+
+    if (result.rowCount > 0) {
+      const expiryDate = result.rows[0].expires_at;
+      const currentDate = new Date();
+
+      // If the expiry date is before the current date, the session has expired
+      return (expiryDate < currentDate);
+    } else {
+      // If the session ID is not found, assume session has expired
+      return true;
+    }
+  } catch (error) {
+    console.error("Error checking session expiry:", error);
+    throw error;
+  } finally {
+    await client.end();
+  }
+}
+
+/**
  * Checks if a session with a given IP exists in the session_ips table.
  *
  * @param {string} session_id The session ID to check.
@@ -377,6 +414,54 @@ export async function getUserByUsername(username) {
   } finally {
     await client.end();
   }
+}
+
+/**
+ * Retrieves an array containing users which match any of the conditions given in the options object.
+ *
+ * @param {Object} [options] An object containing any of the following properties:
+ * @param {string} [options.username] A string to match against the username column - will return all users with usernames that contain this string.
+ * @param {number} [options.after] The ID of the user to retrieve posts after.
+ * @param {number} [options.limit] The maximum number of users to retrieve.
+ * @returns {Promise<Array<User>>} An array of post objects, if any match the criteria.
+ */
+// @ts-ignore
+export async function getUsers({username, after, limit}={}) {
+  // Error checking
+  // For now some queries are impossible without further work.
+  if ((after ?? 0) < 0 || (limit ?? 0) < 0) throw new Error("Cannot query with negative after or limit.");
+
+  // This beautiful mess allows us to dynamically add conditions to the query based on the options object.
+  // NOTE that the query construction here does NOT use standard parameterized queries, because we need to be able to
+  // add conditions dynamically. This is still safe because pgprep still uses parameterized queries internally.
+  const dbQuery = pgprep(
+                `SELECT * FROM users
+                ${username ? 'WHERE LOWER(username) LIKE LOWER(${username})' : ""} 
+                ${after ? 'AND id > ${after}' : ""} 
+                ${limit ? 'LIMIT ${limit}' : ""} 
+                ORDER BY created_at DESC` //TODO: add sorting options
+                );
+  const dbValues = {
+    username: username ? `%${username}%` : null, // Surround with % to allow partial matches.
+    after,
+    limit
+  };
+
+  const client = new PG.Client({ connectionString });
+  try {
+    await client.connect();
+
+    const result = await client.query(dbQuery(dbValues));
+
+    if (result.rows.length > 0) return result.rows;
+    else return [];
+  } catch (error) {
+    throw error; //TODO
+  } finally {
+    await client.end();
+  }
+
+  return []; // This should be impossible.
 }
 
 /**

@@ -33,7 +33,7 @@
     <h3 class="text-2xl mb-5">Blog Management</h3>
     <a class="btn btn-primary" href="/admin/posts">Manage Posts</a>
     <a class="btn btn-primary" href="/admin/users">Manage Users</a>
-    <a class="btn btn-primary" href="/admin/comments">Manage Comments</a>
+    <a class="btn btn-primary btn-disabled" href="/admin/comments">Manage Comments</a>
   </div>
 </main>
 

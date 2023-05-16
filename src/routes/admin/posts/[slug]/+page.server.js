@@ -1,6 +1,7 @@
 import { error, fail } from "@sveltejs/kit";
 import * as Utils from "$lib/server/utils.js";
 import * as DB from "$lib/server/db.js";
+import * as Auth from "$lib/server/auth.js";
 
 /**
  * @typedef { import("$lib/types").Post } Post
@@ -15,7 +16,17 @@ import * as DB from "$lib/server/db.js";
  * @throws {Error} If the post is not found, a 404 Not Found error is thrown.
  * @type {import('./$types').PageServerLoad}
  */
-export async function load({ params }) {
+export async function load({ params, cookies }) {
+  const debug = new Utils.Debugger("routes:admin:posts:slug:load");
+  // Auth check
+  try {
+    await Auth.checkPermissions(cookies.get('sessionid'), { admin: true});
+  } catch (err) {
+    debug.error(err);
+    throw error(403, "Forbidden");
+  }
+  // End auth check
+
   /** @type {Post} */
   try {
     const post = await DB.getPostBySlug(params.slug);

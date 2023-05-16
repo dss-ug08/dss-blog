@@ -3,6 +3,7 @@
 
   export let data;
 
+  // TODO: Kinda ugly, but it works for now
   function deletePost(slug) {
     const confirmed = confirm("Are you sure you want to delete this post?");
     if (confirmed) {
@@ -59,7 +60,7 @@
             <td>
               <div class="flex items-center space-x-3">
                 <div class="avatar">
-                  <div class="mask mask-circle w-12 h-12">
+                  <div class="mask mask-squircle w-12 h-12">
                     <img src={post.author_avatar} alt={post.author_username} />
                   </div>
                 </div>
@@ -71,6 +72,7 @@
             </td>
             <td>{new Date(post.updated_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "medium", hour12: true })}</td>
             <th>
+              <a class="btn btn-success btn-xs" href="/posts/{post.slug}" target="_blank">View</a>
               <a class="btn btn-primary btn-xs" href="/admin/posts/{post.slug}">Edit</a>
               <button class="btn btn-error btn-xs" on:click={() => deletePost(post.slug)}>Delete</button>
             </th>

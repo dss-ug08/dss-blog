@@ -1,6 +1,7 @@
 import { error } from "@sveltejs/kit";
 import * as DB from "$lib/server/db.js";
 import * as Utils from "$lib/server/utils.js";
+import * as Auth from "$lib/server/auth.js";
 
 /**
  * @typedef {import('$lib/types').Post} Post
@@ -13,7 +14,17 @@ import * as Utils from "$lib/server/utils.js";
  * @returns {Promise<{posts: ArrayLike<Post>}>} An array of posts and their authors.
  * @type {import('../$types').PageServerLoad}
  */
-export async function load({ params }) {
+export async function load({ params, cookies }) {
+  const debug = new Utils.Debugger("routes:admin:posts:load");
+  // Auth check
+  try {
+    await Auth.checkPermissions(cookies.get('sessionid'), { admin: true});
+  } catch (err) {
+    debug.error(err);
+    throw error(403, "Forbidden");
+  }
+  // End auth check
+
   const posts = await DB.getPosts({ withAuthor: true });
 
   for (let post of posts) {
