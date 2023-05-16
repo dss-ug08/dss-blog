@@ -21,6 +21,7 @@ export async function load({ params, cookies }) {
   const user = await DB.getUserFromSession(sessionid);
   if (!user) return null;
 
+  user.is_2fa_enabled = await DB.isTwoFactorEnabled(user.id);
   user.avatar = await Utils.gravatar(user.email);
 
   return {

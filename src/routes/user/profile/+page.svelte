@@ -29,7 +29,7 @@
   <h3 class="text-2xl pb-2">Security Info</h3>
   <section class="px-3">
     <p>Password: xxx <a href="" class="btn btn-ghost">Edit</a></p>
-    <p>Two-Factor Authentication: Disabled <a href="" class="btn btn-ghost">Enable Two-Factor Authentication</a></p>
+    <p>Two-Factor Authentication: {data.user.is_2fa_enabled?'Enabled':'Disabled'} <a href="" class="btn btn-ghost">Manage Two-Factor Authentication</a></p>
   </section>
 
   <h3 class="text-2xl pb-2">Settings</h3>

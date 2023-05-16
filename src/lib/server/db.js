@@ -297,6 +297,39 @@ export async function getUserFromSession(sessionId) {
 }
 
 /**
+ * Check if a given user has 2FA enabled.
+ * 
+ * @param {number} userId - The user ID to check.
+ * @returns {Promise<boolean>} - True if the user has 2FA enabled, false otherwise.
+ */
+export async function isTwoFactorEnabled(userId) {
+  const client = new PG.Client({ connectionString });
+
+  try {
+    await client.connect();
+    const query = `
+      SELECT two_factor_auth.is_2fa_enabled
+      FROM users
+      JOIN two_factor_auth ON users.id = two_factor_auth.user_id
+      WHERE users.id = $1;
+    `;
+    const values = [userId];
+    const result = await client.query(query, values);
+
+    if (result.rowCount > 0) {
+      return result.rows[0];
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Error getting user from session:", error);
+    throw error;
+  } finally {
+    await client.end();
+  }
+}
+
+/**
  * Check if a given session has expired.
  * 
  * @param {string} sessionid - The session ID to check.
