@@ -1,6 +1,7 @@
 import { error, fail } from "@sveltejs/kit";
 import * as Utils from "$lib/server/utils.js";
 import * as DB from "$lib/server/db.js";
+import * as Auth from "$lib/server/auth.js";
 
 /**
  * @typedef { import("$lib/types").User } User
@@ -68,5 +69,22 @@ export const actions = {
     //TODO: catch errors here
 
     return { success: true, message: "Email updated successfully." };
+  },
+  password: async ({ request, cookies }) => {
+    // Get existing details
+    const sessionid = cookies.get("sessionid");
+    const user = await DB.getUserFromSession(sessionid);
+
+    // Get new details
+    const data = await request.formData();
+    const newPassword = data.get("password")?.toString();
+    if (!newPassword) return fail(400, { success: false, message: "Password cannot be empty." });
+
+    const newPasswordHash = await Auth.hashPassword(newPassword);
+
+    await DB.modifyUser(user.id, undefined, undefined, newPasswordHash);
+    //TODO: catch errors here
+
+    return { success: true, message: "Password updated successfully." };
   },
 };
