@@ -1,4 +1,5 @@
 <script>
+  import Meta from "$lib/components/Meta.svelte";
   /* 
     This page is where a user can provide credentials to create a new account.
     The user should then be redirected to the login page.
@@ -13,75 +14,40 @@
 
   /** @type {import('./$types').ActionData} */
   export let form;
-
-  if (data.user) {
-    // If the user is already logged in, redirect them to the home page
-    throw redirect(307, '/');
-  }
-
-  let errorMessage = "";
-  let successMessage = "";
-
-  async function handleSubmit(event) {
-    event.preventDefault();
-
-    const formData = new FormData(event.target);
-    const username = formData.get("username");
-    const email = formData.get("email");
-    const password = formData.get("password");
-
-    const response = await fetch("/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded" // Change the Content-Type here
-      },
-      body: new URLSearchParams({ username, email, password }) // Use URLSearchParams to format the data correctly
-    });
-
-    if (response.ok) {
-      successMessage = "User registered successfully";
-      throw redirect(307, "/login");
-    } else {
-      const error = await response.json();
-      errorMessage = error.message;
-    }
-  }
-
 </script>
 
-<main class="container">
-  <h2>Register</h2>
-  {#if errorMessage}
-    <p class="error">{errorMessage}</p>
+<Meta title="Register" />
+
+<main class="container m-auto flex flex-col items-center my-5">
+  <h2 class="text-4xl mb-5">Register</h2>
+  
+  {#if form?.message}
+    <div class={form?.success ? 'text-success' : 'text-error'}>{form?.message}</div>
   {/if}
-  {#if successMessage}
-    <p class="success">{successMessage}</p>
-  {:else}
-    <form on:submit|preventDefault="{handleSubmit}">
-      <label>
-        Username
-        <input name="username" type="text" required />
+
+  <form method="POST">
+    <div class="form-control w-full max-w-xs">
+      <label class="label" for="username">
+        <span class="label-text">Username</span>
       </label>
-      <label>
-        Email
-        <input name="email" type="email" required />
+      <input id="username" name="username" type="text" required class="input input-bordered w-full max-w-xs" />
+    </div>
+    <div class="form-control w-full max-w-xs">
+      <label class="label" for="email">
+        <span class="label-text">Email</span>
       </label>
-      <label>
-        Password
-        <input name="password" type="password" required />
+      <input id="email" name="email" type="email" required class="input input-bordered w-full max-w-xs" />
+    </div>
+    <div class="form-control w-full max-w-xs">
+      <label class="label" for="password">
+        <span class="label-text">Password</span>
       </label>
-      <button>Create account</button>
-    </form>
-  {/if}
+      <input id="password" name="password" type="password" required class="input input-bordered w-full max-w-xs" />
+    </div>
+    <div class="form-control w-full max-w-xs mt-5">
+      <button type="submit" class="btn btn-primary">Create account</button>
+    </div>
+  </form>
 </main>
 
-<style>
-  .error {
-    color: red;
-    margin-bottom: 1rem;
-  }
-  .success {
-    color: green;
-    margin-bottom: 1rem;
-  }
-</style>
+<style></style>

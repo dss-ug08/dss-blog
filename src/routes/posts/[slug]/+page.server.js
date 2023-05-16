@@ -1,31 +1,45 @@
-import { error} from "@sveltejs/kit";
-/** 
- * This code should load an individual post's data from the database, and return it to the
- * frontend. If the post is not found, we should return an error which will be handled by
- * the +error.svelte component.
- * 
- * @returns {Promise<{post: {title: String, content: String, slug: String}}>} A post object containing the post's title, content, and slug.
- * @type {import('./$types').PageServerLoad}
-*/
-export async function load({ params }) {
-  /*
-    Code for handling posts could look something like this:
-      import getPostFromDatabase from '$lib/server/db.js';
+import { error } from "@sveltejs/kit";
+import { marked } from "marked";
+import * as Utils from "$lib/server/utils.js";
+import * as DB from "$lib/server/db.js";
 
-      const post = await getPostFromDatabase(params.slug);
- 
-      if (post) {
-        return post;
-      }
+/**
+ * @typedef { import("$lib/types").Post } Post
+ * @typedef { import("$lib/types").Comment } Comment
+ */
+
+/**
+ * Loads a post with the given slug from the database. If the post is found, its data is
+ * returned, otherwise a 404 Not Found error is thrown.
+ *
+ * @returns {Promise<{post: Post, comments: ArrayLike<Comment>}>} - A response object containing the post data or an error if the post is not found.
+ * @throws {Error} If the post is not found, a 404 Not Found error is thrown.
+ * @type {import('./$types').PageServerLoad}
+ */
+export async function load({ params }) {
+  /** @type {Post} */
+  try {
+    const post = await DB.getPostBySlug(params.slug);
+    const comments = await DB.getCommentsForPostId(post.id);
     
-      throw error(404, 'Not found');
-  */
-  return {
-    // For demonstration purposes, we'll just return a dummy post.
-    post: {
-      title: "Hello world!",
-      content: "This is a dummy post.",
-      slug: params.slug,
-    },
-  };
+    post.excerpt = Utils.truncateExcerpt(post.content);
+    post.content = await Utils.sanitizeHTML(
+      await marked.parse(post.content, {
+        async: true,
+        breaks: true,
+        gfm: true,
+      })
+    );
+
+    //TODO: This isn't great, can we clean this up?
+    post.author_avatar = await Utils.gravatar(post.author_email);
+
+    return {
+      post,
+      comments
+    };
+    
+  } catch (err) {
+    throw error(404, "Not Found");
+  }
 }
