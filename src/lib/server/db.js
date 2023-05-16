@@ -150,6 +150,33 @@ export async function modifyUser(userId, username, email, passwordHash) {
     await client.end();
   }
 }
+/**
+ * Sets the admin status of a user.
+ * 
+ * @param {string} id - The id of the user to modify.
+ * @param {boolean} isAdmin - The new admin status of the user.
+ * @returns {Promise<boolean>} True if the modification was successful, false otherwise.
+ */
+export async function setAdmin(id, isAdmin) {
+  const client = new PG.Client({ connectionString });
+
+  try {
+    await client.connect();
+    const query = `
+      UPDATE users
+      SET is_admin = $2
+      WHERE username = $1
+      RETURNING *;
+    `;
+    const result = await client.query(query, [id, isAdmin]);
+    if (result.rows.length > 0) return true;
+  } catch (error) {
+    console.error(`Error updating user: ${error}`);
+    return false;
+  } finally {
+    await client.end();
+  }
+}
 
 /**
  * Verifies if the given username and password match a user in the users table.

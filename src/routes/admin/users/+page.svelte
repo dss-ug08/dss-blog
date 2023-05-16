@@ -1,13 +1,22 @@
 <script>
   import Meta from "$lib/components/Meta.svelte";
 
+  /** @type {import("./$types").PageData} */
   export let data;
+
+  /** @type {import("./$types").ActionData} */
+  export let form;
 </script>
 
 <Meta title="User Management" />
 
 <main class="container sm flex flex-col items-center m-auto p-5">
   <h1 class="text-4xl mb-5">User Management</h1>
+  
+  {#if form?.message}
+    <div class={form?.success ? 'text-success' : 'text-error'}>{form?.message}</div>
+  {/if}
+
   <div class="overflow-x-auto w-full">
     <table class="table w-full">
       <!-- head -->
@@ -46,6 +55,10 @@
             </td>
             <td>{new Date(user.updated_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "medium", hour12: true })}</td>
             <th>
+              <form method="POST" action="?/toggleAdmin">
+                <input type="hidden" name="username" value={user.username} />
+                <button class="btn btn-warning btn-xs">Toggle Admin</button>
+              </form>
               <button class="btn btn-primary btn-xs btn-disabled">Edit</button>
               <button class="btn btn-error btn-xs btn-disabled">Delete</button>
             </th>
