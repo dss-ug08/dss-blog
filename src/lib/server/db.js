@@ -878,3 +878,39 @@ export async function set2FAEnabledForUser(userId, enabled) {
     await client.end();
   }
 }
+
+
+/**
+ * Checks whether 2FA is enabled for the user with the given ID.
+ *
+ * @param {number} user_id The ID of the user to check.
+ * @returns {Promise<boolean>} Whether 2FA is enabled for the user.
+ */
+export async function check2FAIsEnabled(user_id) {
+  const client = new PG.Client({ connectionString });
+
+  try {
+    await client.connect();
+
+    const query = `
+      SELECT is_2fa_enabled 
+      FROM two_factor_auth 
+      WHERE user_id = $1;
+    `;
+
+    const values = [user_id];
+
+    const result = await client.query(query, values);
+
+    if (result.rows.length > 0) {
+      return result.rows[0].is_2fa_enabled;
+    } else {
+      throw new Error(`User with ID ${user_id} not found.`);
+    }
+  } catch (error) {
+    console.error("Error checking 2FA status:", error);
+    return false;
+  } finally {
+    await client.end();
+  }
+}
