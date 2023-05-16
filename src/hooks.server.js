@@ -14,6 +14,8 @@ const securityHeaders = {
 };
 
 export async function handle({ event, resolve }) {
+  const debug = new Utils.Debugger("hooks:handle");
+
   // Destroy session if user IP changes unexpectedly
   const clientAddress = event.getClientAddress();
   const sessionid = event.cookies.get("sessionid");
@@ -27,16 +29,23 @@ export async function handle({ event, resolve }) {
 
   // Auth checks
   if (event.url.pathname.startsWith("/admin")) { 
-    const debug = new Utils.Debugger("hooks:handle");
-    // Auth check
+    // Admin routes
     try {
       await Auth.checkPermissions(event.cookies.get('sessionid'), { admin: true});
     } catch (err) {
       debug.error(err);
       throw Kit.redirect(302, '/auth/login');
     }
-    // End auth check
+  } else if (event.url.pathname.startsWith("/user")) { 
+    // User routes
+    try {
+      await Auth.checkPermissions(event.cookies.get('sessionid'));
+    } catch (err) {
+      debug.error(err);
+      throw Kit.redirect(302, '/auth/login');
+    }
   }
+
 
   // Generate response
   const response = await resolve(event);
