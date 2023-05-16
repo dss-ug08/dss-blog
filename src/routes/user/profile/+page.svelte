@@ -6,6 +6,17 @@
 
   /** @type {import("./$types").ActionData} */
   export let form;
+
+  function onDeleteAccountPressed(event) {
+    // Doing it this way allows the user to still delete if JS is disabled,
+    // albeit with no confirmation.
+
+    // If the user confirms, let the event continue
+    if (confirm('Are you sure you want to delete your account? This is irreversible!')) alert('deleted');
+
+    // Otherwise cancel the event!
+    event.preventDefault();
+  }
 </script>
 
 <Meta title="Profile" />
@@ -67,7 +78,10 @@
 
   <h3 class="text-2xl pb-2">Danger Zone</h3>
   <section class="px-3">
-    <a href="" class="btn btn-error">Delete Account</a>
+    <form method="POST" action="?/deleteAccount">
+      <!--TODO: add deletion confirmation-->
+      <button class="btn btn-error">Delete Account</button>
+    </form>
   </section>
 </main>
 

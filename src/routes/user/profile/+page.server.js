@@ -1,4 +1,4 @@
-import { error, fail } from "@sveltejs/kit";
+import { error, fail, redirect } from "@sveltejs/kit";
 import * as Utils from "$lib/server/utils.js";
 import * as DB from "$lib/server/db.js";
 import * as Auth from "$lib/server/auth.js";
@@ -87,4 +87,16 @@ export const actions = {
 
     return { success: true, message: "Password updated successfully." };
   },
+  deleteAccount: async ({ request, cookies }) => {
+    const sessionid = cookies.get("sessionid");
+    const user = await DB.getUserFromSession(sessionid);
+
+    // TODO: if user is the last admin, prevent deletion
+
+    const success = await DB.deleteUser(user.id);
+    if (!success) return fail(500, { success: false, message: "Failed to delete account." });
+
+    //return { success: true, message: "Account deleted successfully." };
+    throw redirect(302, "/?message=Account+deleted+successfully.");
+  }
 };

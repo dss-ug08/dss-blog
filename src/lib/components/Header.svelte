@@ -8,6 +8,8 @@
   /** @type {User} */
   let user;
 
+  let message;
+
   async function getUserSession() {
     const response = await fetch("/api/auth/session", {
       method: "GET",
@@ -19,8 +21,14 @@
   }
 
   onMount(async () => {
+    // Check for message in query string
+    const params = new URL(document.location).searchParams;
+    message = params.get("message");
+    setTimeout(()=>message=null, 5000);
+
+    // Get user session if present
     let session = await getUserSession();
-    user = session.user;
+    user = session?.user;
   });
 </script>
 
@@ -35,6 +43,9 @@
         <li><a href="/">Home</a></li>
         <li><a href="/posts">Posts</a></li>
         <li><a href="/">About</a></li>
+        {#if user?.is_admin}
+        <li><a href="/admin">Admin</a></li>
+        {/if}
       </ul>
     </div>
   </div>
@@ -79,5 +90,15 @@
     {/if}
   </div>
 </header>
+
+{#if message}
+<div class="toast toast-end">
+  <div class="alert alert-info">
+    <div>
+      <span>{message}</span>
+    </div>
+  </div>
+</div>
+{/if}
 
 <style></style>

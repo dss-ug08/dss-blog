@@ -50,7 +50,7 @@ export async function load({ params, cookies }) {
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-  toggleAdmin: async ({ request, cookies }) => {
+  toggleAdmin: async ({ request }) => {
     const data = await request.formData();
     const username = await data.get("username");
 
@@ -65,4 +65,19 @@ export const actions = {
 
     return { success: true, message: `User ${user.username} is ${wasAdmin ? 'no longer' : 'now'} an admin.`};
   },
+  deleteAccount: async ({ request }) => {
+    const data = await request.formData();
+    const username = await data.get("username");
+
+    /** @type {User} */
+    const user = await DB.getUserByUsername(username);
+    if (!user) return fail(400, {success: false, message: `User ${username} not found.`});
+
+    // TODO: if user is the last admin, prevent deletion
+
+    const success = await DB.deleteUser(user.id);
+    if (!success) return fail(500, { success: false, message: "Failed to delete account." });
+
+    return { success: true, message: "Account deleted successfully." };
+  }
 };

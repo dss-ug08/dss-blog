@@ -60,7 +60,10 @@
                 <button class="btn btn-warning btn-xs">Toggle Admin</button>
               </form>
               <button class="btn btn-primary btn-xs btn-disabled">Edit</button>
-              <button class="btn btn-error btn-xs btn-disabled">Delete</button>
+              <form method="POST" action="?/deleteAccount">
+                <input type="hidden" name="username" value={user.username} />
+                <button class="btn btn-error btn-xs">Delete</button>
+              </form>
             </th>
           </tr>
         {/each}
