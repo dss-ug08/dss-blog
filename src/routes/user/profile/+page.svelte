@@ -3,6 +3,9 @@
 
   /** @type {import("./$types").PageData} */
   export let data;
+
+  /** @type {import("./$types").ActionData} */
+  export let form;
 </script>
 
 <Meta title="Profile" />
@@ -16,20 +19,45 @@
     </ul>
   </div>
   <h1 class="text-4xl pb-3">Profile - {data.user.username}</h1>
+  
+  {#if form?.message}
+    <div class={form?.success ? 'text-success' : 'text-error'}>{form?.message}</div>
+  {/if}
 
   <h3 class="text-2xl pb-2">Basic Information</h3>
   <section class="px-3">
     <img src={data.user.avatar} alt={data.user.username} />
-    <p>
-      Username: {data.user.username} <a href="" class="btn btn-ghost">Edit</a>
-    </p>
-    <p>Email: {data.user.email} <a href="" class="btn btn-ghost">Edit</a></p>
+    <form method="POST" action="?/username">
+      <label class="label" for="username">
+        <span class="label-text">Username</span>
+      </label>
+      <input type="text" value={data.user.username} name="username" id="username" class="input input-bordered w-64" />
+      <button class="btn btn-ghost">Edit</button>
+    </form>
+    <form method="POST" action="?/email">
+      <label class="label" for="email">
+        <span class="label-text">Email</span>
+      </label>
+      <input type="email" value={data.user.email} name="email" id="email" class="input input-bordered w-64" />
+      <button class="btn btn-ghost">Edit</button>
+    </form>
   </section>
 
   <h3 class="text-2xl pb-2">Security Info</h3>
   <section class="px-3">
-    <p>Password: xxx <a href="" class="btn btn-ghost">Edit</a></p>
-    <p>Two-Factor Authentication: {data.user.is_2fa_enabled?'Enabled':'Disabled'} <a href="" class="btn btn-ghost">Manage Two-Factor Authentication</a></p>
+    <form method="POST" action="?/password">
+      <label class="label" for="password">
+        <span class="label-text">Password</span>
+      </label>
+      <input type="password" name="password" id="password" placeholder="********" class="input input-bordered w-64" />
+      <button class="btn btn-ghost">Update</button>
+    </form>
+    <p>
+      <label class="label" for="two-factor">
+        <span class="label-text">Two-Factor Authentication</span>
+      </label>
+      <input id="two-factor" type="checkbox" disabled checked={data.user.is_2fa_enabled} class="checkbox checkbox-lg" /> <b>{data.user.is_2fa_enabled ? 'Enabled' : 'Disabled'}</b> <a href="" class="btn btn-ghost btn-sm" id="two-factor">Manage Two-Factor Authentication</a>
+    </p>
   </section>
 
   <h3 class="text-2xl pb-2">Settings</h3>
