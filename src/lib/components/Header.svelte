@@ -34,7 +34,7 @@
       <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
         <li><a href="/">Home</a></li>
         <li><a href="/posts">Posts</a></li>
-        <li><a>About</a></li>
+        <li><a href="/">About</a></li>
       </ul>
     </div>
   </div>
@@ -49,7 +49,7 @@
     <div class="dropdown dropdown-end">
       <label tabindex="0" class="btn btn-ghost btn-circle avatar">
         <div class="w-10 rounded-full">
-          <img src="https://www.gravatar.com/avatar/ab76a055223f856e0e270ff65b35a6c0.jpg" alt={user.username} />
+          <img src={user?.avatar} alt={user.username} />
         </div>
       </label>
       <ul tabindex="0" class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
