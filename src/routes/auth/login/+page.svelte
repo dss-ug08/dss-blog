@@ -95,14 +95,14 @@
         <span class="label-text">Username</span>
       </label>
       <input id="username" name="username" type="text"
-             class="input input-bordered w-full max-w-xs" required />
+             class="input input-bordered w-full max-w-xs" minlength="3" maxlength="255" required />
     </div>
     <div class="form-control w-full max-w-xs">
       <label for="password">
         <span class="label-text">Password</span>
       </label>
       <input id="password" name="password" type="password"
-             class="input input-bordered w-full max-w-xs" required />
+             class="input input-bordered w-full max-w-xs" required minlength="6" maxlength="255" />
     </div>
     <div class="form-control w-full max-w-xs">
       <label for="code">

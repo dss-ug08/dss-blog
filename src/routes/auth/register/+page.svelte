@@ -87,19 +87,19 @@
       <label class="label" for="username">
         <span class="label-text">Username</span>
       </label>
-      <input id="username" name="username" type="text" required class="input input-bordered w-full max-w-xs" />
+      <input id="username" name="username" type="text" required minlength="3" maxlength="255" class="input input-bordered w-full max-w-xs" />
     </div>
     <div class="form-control w-full max-w-xs">
       <label class="label" for="email">
         <span class="label-text">Email</span>
       </label>
-      <input id="email" name="email" type="email" required class="input input-bordered w-full max-w-xs" />
+      <input id="email" name="email" type="email" required maxlength="255" class="input input-bordered w-full max-w-xs" />
     </div>
     <div class="form-control w-full max-w-xs">
       <label class="label" for="password">
         <span class="label-text">Password</span>
       </label>
-      <input id="password" name="password" type="password" required class="input input-bordered w-full max-w-xs" />
+      <input id="password" name="password" type="password" minlength="6" maxlength="255" required class="input input-bordered w-full max-w-xs" />
     </div>
 
     <div class="pt-4">
