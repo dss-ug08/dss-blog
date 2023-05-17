@@ -1,4 +1,7 @@
 import * as DB from "$lib/server/db.js";
+import * as TOTP from "$lib/server/2fa.js";
+import * as Auth from "$lib/server/auth.js";
+import * as Utils from "$lib/server/utils.js";
 import { fail, json, redirect } from "@sveltejs/kit";
 
 /**
@@ -38,6 +41,7 @@ export const actions = {
     const data = await request.formData();
     const username = data.get("username");
     const password = data.get("password");
+    const totpCode = data.get("code");
 
     // Verify the submitted user credentials
     const user = await DB.verifyUserCredentials(username, password);
@@ -49,6 +53,14 @@ export const actions = {
 
     // If the user credentials are invalid, return a 401 status with an error message
     if (!user) return fail(401, { success: false, message: "Invalid username or password." });
+
+    // Check 2fa if enabled
+    if (await DB.isTwoFactorEnabled(user.id)) {
+      const totpSecret = await DB.getUserSecretFromDatabase(user.id);
+      if (!totpCode) return fail(401, { success: false, message: "2FA code required." });
+      if (!totpSecret) return fail(401, { success: false, message: "2FA secret not found, contact support." });
+      if (!TOTP.verify2FAToken(totpSecret, totpCode.toString())) return fail(401, { success: false, message: "Invalid 2FA code." });
+    }
 
     // If the credentials are valid, create a session and return the session ID as a cookie
     const sessionId = await DB.createSession(user.id, clientAddress);

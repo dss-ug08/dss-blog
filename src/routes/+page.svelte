@@ -19,6 +19,7 @@
     <span slot="buttons">
       <a href="/auth/login" class="btn btn-primary">Login</a>
       <a href="/auth/register" class="btn btn-primary">Register</a>
+      <a href="/user" class="btn btn-primary">Profile</a>
       <a href="/search" class="btn btn-primary">Search</a>
       <a href="/posts" class="btn btn-primary">Posts</a>
       <a href="/posts/markdowntest" class="btn btn-primary">Test Post</a>

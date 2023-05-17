@@ -1,4 +1,4 @@
-import { error } from "@sveltejs/kit";
+import { error, fail } from "@sveltejs/kit";
 import * as DB from "$lib/server/db.js";
 import * as Auth from "$lib/server/auth.js";
 import * as Utils from "$lib/server/utils.js";
@@ -47,3 +47,37 @@ export async function load({ params, cookies }) {
     */
   };
 }
+
+/** @type {import('./$types').Actions} */
+export const actions = {
+  toggleAdmin: async ({ request }) => {
+    const data = await request.formData();
+    const username = await data.get("username");
+
+    /** @type {User} */
+    const user = await DB.getUserByUsername(username);
+    if (!user) return fail(400, {success: false, message: `User ${username} not found.`});
+
+    const wasAdmin = user.is_admin;
+
+    const success = await DB.setAdmin(user.username, !wasAdmin);
+    if (!success) return fail (500, {success: false, message: `Failed to set admin status for user ${user.username}.`});
+
+    return { success: true, message: `User ${user.username} is ${wasAdmin ? 'no longer' : 'now'} an admin.`};
+  },
+  deleteAccount: async ({ request }) => {
+    const data = await request.formData();
+    const username = await data.get("username");
+
+    /** @type {User} */
+    const user = await DB.getUserByUsername(username);
+    if (!user) return fail(400, {success: false, message: `User ${username} not found.`});
+
+    // TODO: if user is the last admin, prevent deletion
+
+    const success = await DB.deleteUser(user.id);
+    if (!success) return fail(500, { success: false, message: "Failed to delete account." });
+
+    return { success: true, message: "Account deleted successfully." };
+  }
+};

@@ -12,6 +12,8 @@ export type Post = {
   author_email?: string;
   author_avatar?: string;
   author_is_admin?: boolean;
+  /* When JOINed with two_factor_auth info: */
+  is_2fa_enabled?: boolean;
 };
 
 export type Comment = {

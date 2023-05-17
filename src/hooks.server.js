@@ -5,7 +5,8 @@ import * as Kit from "@sveltejs/kit";
 
 const securityHeaders = {
   //'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload', // Disabled for development
-  'Content-Security-Policy': "default-src 'self' 'unsafe-inline'; img-src * 'self' data:",  // Don't load content from other hosts (XSS protection)
+  //TODO: temporarily disabled due to recaptcha
+  //'Content-Security-Policy': "default-src 'self' 'unsafe-inline'; img-src * 'self' data:",  // Don't load content from other hosts (XSS protection)
   'X-Frame-Options': 'DENY',                        // Don't load our content in iframes (clickjacking protection)
   'Cross-Origin-Embedder-Policy': 'credentialless', // Don't pass our cookies to CORS requests
   'Cross-Origin-Opener-Policy': 'same-origin',      // Ensure our top-level document does not share a browsing context group with cross-origin document
@@ -14,6 +15,8 @@ const securityHeaders = {
 };
 
 export async function handle({ event, resolve }) {
+  const debug = new Utils.Debugger("hooks:handle");
+
   // Destroy session if user IP changes unexpectedly
   const clientAddress = event.getClientAddress();
   const sessionid = event.cookies.get("sessionid");
@@ -27,16 +30,23 @@ export async function handle({ event, resolve }) {
 
   // Auth checks
   if (event.url.pathname.startsWith("/admin")) { 
-    const debug = new Utils.Debugger("hooks:handle");
-    // Auth check
+    // Admin routes
     try {
       await Auth.checkPermissions(event.cookies.get('sessionid'), { admin: true});
     } catch (err) {
       debug.error(err);
       throw Kit.redirect(302, '/auth/login');
     }
-    // End auth check
+  } else if (event.url.pathname.startsWith("/user")) { 
+    // User routes
+    try {
+      await Auth.checkPermissions(event.cookies.get('sessionid'));
+    } catch (err) {
+      debug.error(err);
+      throw Kit.redirect(302, '/auth/login');
+    }
   }
+
 
   // Generate response
   const response = await resolve(event);

@@ -27,13 +27,19 @@
       <label class="label" for="username">
         <span class="label-text">Username</span>
       </label>
-      <input id="username" name="username" type="text" class="input input-bordered w-full max-w-xs" />
+      <input id="username" name="username" type="text" class="input input-bordered w-full max-w-xs" required />
     </div>
     <div class="form-control w-full max-w-xs">
       <label for="password">
         <span class="label-text">Password</span>
       </label>
-      <input id="password" name="password" type="password" class="input input-bordered w-full max-w-xs" />
+      <input id="password" name="password" type="password" class="input input-bordered w-full max-w-xs" required />
+    </div>
+    <div class="form-control w-full max-w-xs">
+      <label for="code">
+        <span class="label-text">TOTP Code (if enabled)</span>
+      </label>
+      <input type="text" name="code" id="code" class="input input-bordered w-full" minlength="6" maxlength="6" inputmode="numeric" pattern="\d*" />
     </div>
     <div class="form-control w-full max-w-xs mt-5">
       <button type="submit" class="btn btn-primary">Log in</button>

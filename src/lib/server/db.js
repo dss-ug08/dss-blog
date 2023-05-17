@@ -132,6 +132,7 @@ export async function modifyUser(userId, username, email, passwordHash) {
     }
 
     // Build the finalised query
+    //FIXME: This is vulnerable to SQL injection, use pg-prepared
     const query = `
       UPDATE users
       SET ${fieldsToUpdate.join(", ")}
@@ -144,6 +145,33 @@ export async function modifyUser(userId, username, email, passwordHash) {
 
   } catch (error) {
     console.error("Error modifying user:", error);
+    return false;
+  } finally {
+    await client.end();
+  }
+}
+/**
+ * Sets the admin status of a user.
+ * 
+ * @param {string} id - The id of the user to modify.
+ * @param {boolean} isAdmin - The new admin status of the user.
+ * @returns {Promise<boolean>} True if the modification was successful, false otherwise.
+ */
+export async function setAdmin(id, isAdmin) {
+  const client = new PG.Client({ connectionString });
+
+  try {
+    await client.connect();
+    const query = `
+      UPDATE users
+      SET is_admin = $2
+      WHERE username = $1
+      RETURNING *;
+    `;
+    const result = await client.query(query, [id, isAdmin]);
+    if (result.rows.length > 0) return true;
+  } catch (error) {
+    console.error(`Error updating user: ${error}`);
     return false;
   } finally {
     await client.end();
@@ -297,6 +325,39 @@ export async function getUserFromSession(sessionId) {
 }
 
 /**
+ * Check if a given user has 2FA enabled.
+ * 
+ * @param {number} userId - The user ID to check.
+ * @returns {Promise<boolean>} - True if the user has 2FA enabled, false otherwise.
+ */
+export async function isTwoFactorEnabled(userId) {
+  const client = new PG.Client({ connectionString });
+
+  try {
+    await client.connect();
+    const query = `
+      SELECT two_factor_auth.is_2fa_enabled
+      FROM users
+      JOIN two_factor_auth ON users.id = two_factor_auth.user_id
+      WHERE users.id = $1;
+    `;
+    const values = [userId];
+    const result = await client.query(query, values);
+
+    if (result.rowCount > 0) {
+      return result.rows[0];
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Error getting user from session:", error);
+    throw error;
+  } finally {
+    await client.end();
+  }
+}
+
+/**
  * Check if a given session has expired.
  * 
  * @param {string} sessionid - The session ID to check.
@@ -393,7 +454,7 @@ export async function getUserByEmail(email) {
  * Retrieves a user by their username from the users table.
  *
  * @param {string} username The username of the user to look up.
- * @returns {Promise<Object | null>} The user object if found, or null if no user with the given username is found.
+ * @returns {Promise<User | null>} The user object if found, or null if no user with the given username is found.
  */
 export async function getUserByUsername(username) {
   const client = new PG.Client({ connectionString });
@@ -841,6 +902,42 @@ export async function set2FAEnabledForUser(userId, enabled) {
     await client.query(query, values);
   } catch (error) {
     console.error("Error setting user's 2FA status:", error);
+  } finally {
+    await client.end();
+  }
+}
+
+
+/**
+ * Checks whether 2FA is enabled for the user with the given ID.
+ *
+ * @param {number} user_id The ID of the user to check.
+ * @returns {Promise<boolean>} Whether 2FA is enabled for the user.
+ */
+export async function check2FAIsEnabled(user_id) {
+  const client = new PG.Client({ connectionString });
+
+  try {
+    await client.connect();
+
+    const query = `
+      SELECT is_2fa_enabled 
+      FROM two_factor_auth 
+      WHERE user_id = $1;
+    `;
+
+    const values = [user_id];
+
+    const result = await client.query(query, values);
+
+    if (result.rows.length > 0) {
+      return result.rows[0].is_2fa_enabled;
+    } else {
+      throw new Error(`User with ID ${user_id} not found.`);
+    }
+  } catch (error) {
+    console.error("Error checking 2FA status:", error);
+    return false;
   } finally {
     await client.end();
   }

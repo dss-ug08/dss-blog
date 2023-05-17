@@ -12,5 +12,5 @@ export async function GET({ url, cookies }) {
   await DB.destroySession(sessionId);
   cookies.delete("sessionid", { path: "/" });
 
-  throw redirect(302, "/?logout=true");
+  throw redirect(302, "/?message=Logged out successfully.");
 }

@@ -1,6 +1,14 @@
 <script>
   import { onMount } from 'svelte';
+
+  /**
+   * @typedef {import("$lib/types").User} User
+  */
+
+  /** @type {User} */
   let user;
+
+  let message;
 
   async function getUserSession() {
     const response = await fetch("/api/auth/session", {
@@ -13,11 +21,18 @@
   }
 
   onMount(async () => {
+    // Check for message in query string
+    const params = new URL(document.location).searchParams;
+    message = params.get("message");
+    setTimeout(()=>message=null, 5000);
+
+    // Get user session if present
     let session = await getUserSession();
-    user = session.user;
+    user = session?.user;
   });
 </script>
 
+<!-- svelte-ignore a11y-no-noninteractive-tabindex a11y-label-has-associated-control -->
 <header class="navbar bg-base-100">
   <div class="navbar-start">
     <div class="dropdown">
@@ -27,7 +42,10 @@
       <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
         <li><a href="/">Home</a></li>
         <li><a href="/posts">Posts</a></li>
-        <li><a>About</a></li>
+        <li><a href="/">About</a></li>
+        {#if user?.is_admin}
+        <li><a href="/admin">Admin</a></li>
+        {/if}
       </ul>
     </div>
   </div>
@@ -42,18 +60,18 @@
     <div class="dropdown dropdown-end">
       <label tabindex="0" class="btn btn-ghost btn-circle avatar">
         <div class="w-10 rounded-full">
-          <img src="https://www.gravatar.com/avatar/ab76a055223f856e0e270ff65b35a6c0.jpg" />
+          <img src={user?.avatar} alt={user.username} />
         </div>
       </label>
       <ul tabindex="0" class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
-        <li>Hi, {user?.username}!</li>
+        <li><b>Hi, {user?.username}!</b></li>
         <li>
-          <a class="justify-between">
+          <a href="/user/profile" class="justify-between">
             Profile
             <span class="badge">New</span>
           </a>
         </li>
-        <li><a>Settings</a></li>
+        <li><a href="/user/settings">Settings</a></li>
         <li><a href="/auth/logout">Logout</a></li>
       </ul>
     </div>
@@ -72,5 +90,15 @@
     {/if}
   </div>
 </header>
+
+{#if message}
+<div class="toast toast-end">
+  <div class="alert alert-info">
+    <div>
+      <span>{message}</span>
+    </div>
+  </div>
+</div>
+{/if}
 
 <style></style>
