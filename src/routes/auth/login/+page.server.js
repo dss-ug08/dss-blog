@@ -38,7 +38,6 @@ export const actions = {
   default: async ({ request, cookies, getClientAddress }) => {
     //TODO: Return passed form data back to the user if there is an error
 
-
     // Get client IP for rate limiting purposes
     const clientAddress = getClientAddress();
     console.warn(`Client IP: ${clientAddress}`);
@@ -56,7 +55,7 @@ export const actions = {
     const google_response_data = await google_response.json();
     console.log("ReCAPTCHA v2 Status: " + google_response_data.success);
 
-    if (google_response_data.success === false) return fail(401, { success: false, message: "reCAPTCHA verification failed" });
+    if (!Utils.disableRecaptcha && google_response_data.success === false) return fail(401, { success: false, message: "reCAPTCHA verification failed" });
     // End of Recaptcha handling
 
     // User details verification

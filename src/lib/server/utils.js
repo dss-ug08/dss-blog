@@ -4,6 +4,7 @@ import crypto from 'crypto';
 
 export const maxTitleExcerptLength = 55;
 export const maxExcerptLength = 55; // Was 150 characters, now 55 words as rec'd by Wordpress
+export const disableRecaptcha = true;
 
 /**
  * Get the currently configured name of the site.
