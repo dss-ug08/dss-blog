@@ -5,7 +5,7 @@
   export let data;
 </script>
 
-<Meta title="Profile" />
+<Meta title="Settings" />
 
 <main class="container sm m-auto pb-5">
   <div class="breadcrumbs">

@@ -67,7 +67,7 @@
       <label class="label" for="two-factor">
         <span class="label-text">Two-Factor Authentication</span>
       </label>
-      <input id="two-factor" type="checkbox" disabled checked={data.user.is_2fa_enabled} class="checkbox checkbox-lg" /> <b>{data.user.is_2fa_enabled ? 'Enabled' : 'Disabled'}</b> <a href="" class="btn btn-ghost btn-sm" id="two-factor">Manage Two-Factor Authentication</a>
+      <input id="two-factor" type="checkbox" disabled checked={data.user.is_2fa_enabled} class="checkbox checkbox-lg" /> <b>{data.user.is_2fa_enabled ? 'Enabled' : 'Disabled'}</b> <a href="/user/totp" class="btn btn-ghost btn-sm" id="two-factor">Manage Two-Factor Authentication</a>
     </p>
   </section>
 

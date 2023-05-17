@@ -454,7 +454,7 @@ export async function getUserByEmail(email) {
  * Retrieves a user by their username from the users table.
  *
  * @param {string} username The username of the user to look up.
- * @returns {Promise<Object | null>} The user object if found, or null if no user with the given username is found.
+ * @returns {Promise<User | null>} The user object if found, or null if no user with the given username is found.
  */
 export async function getUserByUsername(username) {
   const client = new PG.Client({ connectionString });
