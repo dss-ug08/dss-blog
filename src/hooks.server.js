@@ -34,7 +34,7 @@ export async function handle({ event, resolve }) {
       await Auth.checkPermissions(event.cookies.get('sessionid'), { admin: true});
     } catch (err) {
       debug.error(err);
-      throw Kit.redirect(302, '/');
+      throw Kit.redirect(302, '/?message=You do not have permission to access this page.');
     }
   } else if (event.url.pathname.startsWith("/user")) { 
     // User routes
@@ -42,7 +42,7 @@ export async function handle({ event, resolve }) {
       await Auth.checkPermissions(event.cookies.get('sessionid'));
     } catch (err) {
       debug.error(err);
-      throw Kit.redirect(302, '/');
+      throw Kit.redirect(302, '/?message=You must be logged in to access this page.');
     }
   }
 

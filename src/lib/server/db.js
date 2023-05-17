@@ -103,44 +103,28 @@ export async function modifyUser(userId, username, email, passwordHash) {
 
   try {
     await client.connect();
-
-    // Check for provided fields, if nothing provided skip adding to query.
-    const fieldsToUpdate = [];
-    const values = [userId];
-    let i = 2;
-
-    if (username) {
-      fieldsToUpdate.push(`username = $${i}`);
-      values.push(username);
-      i++;
-    }
-
-    if (email) {
-      fieldsToUpdate.push(`email = $${i}`);
-      values.push(email);
-      i++;
-    }
-
-    if (passwordHash) {
-      fieldsToUpdate.push(`password_hash = $${i}`);
-      values.push(passwordHash);
-    }
-
-    // No fields to update
-    if (fieldsToUpdate.length === 0) {
+    if (!username && !email && !passwordHash) {
+      console.error("Error modifying user: No values provided");
       return false;
     }
 
     // Build the finalised query
-    //FIXME: This is vulnerable to SQL injection, use pg-prepared
-    const query = `
+    const query = pgprep(`
       UPDATE users
-      SET ${fieldsToUpdate.join(", ")}
-      WHERE id = $1
-    `;
+      SET ${username?'username = ${username}':''}
+      ${email?'email = ${email}':''}
+      ${passwordHash?'password_hash = ${passwordHash}':''}
+      WHERE id = ${userId}
+    `);
+
+    const values = {
+      username,
+      email,
+      passwordHash,
+    }
 
     // Push new values
-    await client.query(query, values);
+    await client.query(query(values));
     return true;
 
   } catch (error) {
