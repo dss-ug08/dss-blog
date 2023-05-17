@@ -39,6 +39,7 @@
     "pg": "^8.10.0",
     "pg-prepared": "^2.5.13",
     "qrcode": "^1.5.3",
-    "speakeasy": "^2.0.0"
+    "speakeasy": "^2.0.0",
+    "svelte-recaptcha-v2": "^0.0.2"
   }
 }

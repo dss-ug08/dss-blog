@@ -30,19 +30,21 @@
     </ul>
   </div>
   <h1 class="text-4xl pb-3">Two-Factor Authentication - {data.user.username}</h1>
-  
+
   {#if form?.message}
     <div class={form?.success ? 'text-success' : 'text-error'}>{form?.message}</div>
   {/if}
-
-  <h3 class="text-2xl pb-2">TOTP</h3>
   <section class="px-3">
     {#if !form}
       <!-- Stage 0: Display current status -->
       {#if data.user.is_2fa_enabled}
         <p>Two-Factor Authentication is enabled.</p>
-        <form method="POST" action="?/disable">
+        <form method="POST" action="?/totpDisable">
           <input type="hidden" name="username" value={data.user.username} />
+          <label class="label" for="disable-code">
+            <span class="label-text">Code</span>
+          </label>
+          <input type="text" name="disable-code" id="disable-code" class="input input-bordered w-64" minlength="6" maxlength="6" inputmode="numeric" pattern="\d*"/>
           <button class="btn btn-error">Disable</button>
         </form>
       {:else}

@@ -40,5 +40,18 @@ export async function generate2FAQrCode(otpauth_url) {
  * @returns {boolean} Whether the token is valid.
  */
 export async function verify2FAToken(secret, token) {
-  return speakeasy.totp.verify({ secret, encoding: 'base32', token });
+
+  console.log('Verifying 2FA token...');
+  console.log('Token: ', token);
+
+  const result = speakeasy.totp.verify({
+    secret: secret,
+    encoding: 'base32',
+    token,
+    window: 30
+  });
+
+  console.log('Verification finished, result: ', result);
+
+  return result;
 }

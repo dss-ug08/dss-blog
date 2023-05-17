@@ -897,15 +897,22 @@ export async function set2FAEnabledForUser(userId, enabled) {
 
   try {
     await client.connect();
-    const query = 'UPDATE two_factor_auth SET is_2fa_enabled = $1 WHERE user_id = $2;';
-    const values = [enabled, userId];
-    await client.query(query, values);
+    if (enabled) {
+      const query = 'UPDATE two_factor_auth SET is_2fa_enabled = $1 WHERE user_id = $2;';
+      const values = [enabled, userId];
+      await client.query(query, values);
+    } else {
+      const query = 'DELETE FROM two_factor_auth WHERE user_id = $1;';
+      const values = [userId];
+      await client.query(query, values);
+    }
   } catch (error) {
     console.error("Error setting user's 2FA status:", error);
   } finally {
     await client.end();
   }
 }
+
 
 
 /**
