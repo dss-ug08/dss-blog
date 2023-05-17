@@ -5,7 +5,8 @@ import * as Kit from "@sveltejs/kit";
 
 const securityHeaders = {
   //'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload', // Disabled for development
-  'Content-Security-Policy': "default-src 'self' 'unsafe-inline'; img-src * 'self' data:; frame-src www.google.com; script-src www.google.com unsafe-inline 'self';",  // Don't load content from other hosts (XSS protection)
+  //TODO: temporarily disabled due to recaptcha
+  //'Content-Security-Policy': "default-src 'self' 'unsafe-inline'; img-src * 'self' data:",  // Don't load content from other hosts (XSS protection)
   'X-Frame-Options': 'DENY',                        // Don't load our content in iframes (clickjacking protection)
   'Cross-Origin-Embedder-Policy': 'credentialless', // Don't pass our cookies to CORS requests
   'Cross-Origin-Opener-Policy': 'same-origin',      // Ensure our top-level document does not share a browsing context group with cross-origin document
