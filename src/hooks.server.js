@@ -34,7 +34,7 @@ export async function handle({ event, resolve }) {
       await Auth.checkPermissions(event.cookies.get('sessionid'), { admin: true});
     } catch (err) {
       debug.error(err);
-      throw Kit.redirect(302, '/auth/login');
+      throw Kit.redirect(302, '/');
     }
   } else if (event.url.pathname.startsWith("/user")) { 
     // User routes
@@ -42,7 +42,7 @@ export async function handle({ event, resolve }) {
       await Auth.checkPermissions(event.cookies.get('sessionid'));
     } catch (err) {
       debug.error(err);
-      throw Kit.redirect(302, '/auth/login');
+      throw Kit.redirect(302, '/');
     }
   }
 

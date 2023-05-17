@@ -21,7 +21,7 @@
 
 <Meta title="Profile" />
 
-<main class="container sm m-auto pb-5">
+<main class="container sm m-auto pb-5 grid grid-cols-1">
   <div class="breadcrumbs">
     <ul class="!whitespace-normal">
       <li><a href="/">Home</a></li>
