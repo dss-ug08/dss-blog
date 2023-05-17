@@ -55,7 +55,10 @@ export const actions = {
     const google_response_data = await google_response.json();
     console.log("ReCAPTCHA v2 Status: " + google_response_data.success);
 
-    if (!Utils.disableRecaptcha && google_response_data.success === false) return fail(401, { success: false, message: "reCAPTCHA verification failed" });
+    if (!Utils.disableRecaptcha && google_response_data.success === false) {
+      console.dir(google_response_data);
+      return fail(401, { success: false, message: "reCAPTCHA verification failed" });
+    }
     // End of Recaptcha handling
 
     // User details verification
